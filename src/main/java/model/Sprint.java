@@ -7,15 +7,21 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
-@javax.persistence.Entity
-@Table(name = "sprint")
+
+@NamedQueries({
 @NamedQuery(name = "Sprints.findAll",
         query = "SELECT f FROM Sprint f ORDER BY f.name",
         hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
+//@NamedQuery(name = "Sprints.getActiveSprint",
+//        query = "SELECT * FROM Sprint where to_date(to_char(NOW(), 'YYYY-MM-DD'), 'YYYY-MM-DD') between  startdate and enddate",
+//        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
+})
+@javax.persistence.Entity
+@Table(name = "sprint")
 public class Sprint extends Entity {
     @Column(length = 100)
     private String name;
-
+    private Boolean active;
     private LocalDate startDate;
     private LocalDate endDate;
     private Long sprintNumber;
@@ -28,16 +34,25 @@ public class Sprint extends Entity {
     }
 
 
-    public Sprint(String name, LocalDate startDate, LocalDate endDate, Long sprintNumber) {
+    public Sprint(String name, LocalDate startDate, LocalDate endDate, Boolean active, Long sprintNumber) {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.active = active;
         this.sprintNumber = sprintNumber;
         this.setRegistrationDate(LocalDate.now());
     }
 
     public Long getSprintNumber() {
         return sprintNumber;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public void setSprintNumber(Long sprintNumber) {
