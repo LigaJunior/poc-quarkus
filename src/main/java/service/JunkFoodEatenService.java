@@ -1,11 +1,13 @@
 package service;
 
 import model.JunkFoodEaten;
-import model.RequestModel.JunkFoodRM;
+import model.Sprint;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
 
 @ApplicationScoped
 public class JunkFoodEatenService
@@ -23,9 +25,20 @@ public class JunkFoodEatenService
     }
 
     public JunkFoodEaten saveOne(JunkFoodEaten junkFoodEaten){
-        JunkFoodEaten food = new JunkFoodEaten(junkFoodEaten.getName(), junkFoodEaten.getSprintId(),
+        JunkFoodEaten food = new JunkFoodEaten(junkFoodEaten.getName(),
                 junkFoodEaten.getPlayerId(), junkFoodEaten.getAmount());
+        food.setSprintId(findActiveSprints());
         entityManager.persist(food);
         return food;
+    }
+
+    public Long findActiveSprints() {
+        Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
+        List<Sprint> source = query.getResultList();
+        Long id = source.get(0).getId();
+
+
+
+        return id;
     }
 }

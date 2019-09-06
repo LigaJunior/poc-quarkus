@@ -10,6 +10,7 @@ import java.time.LocalDate;
 public class JunkFoodEaten extends model.abstracts.Entity {
     @Column(length = 40, unique = true)
     private String name;
+    @Transient
     private Long sprintId;
     private Long playerId;
     private int amount;
@@ -19,9 +20,8 @@ public class JunkFoodEaten extends model.abstracts.Entity {
 
     }
 
-    public JunkFoodEaten(String name, Long sprintId, Long playerId, int amount) {
+    public JunkFoodEaten(String name, Long playerId, int amount) {
         this.name = name;
-        this.sprintId = sprintId;
         this.playerId = playerId;
         this.amount = amount;
         this.setRegistrationDate(LocalDate.now());
