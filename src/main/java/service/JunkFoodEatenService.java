@@ -1,5 +1,6 @@
 package service;
 
+import model.JunkFood;
 import model.JunkFoodEaten;
 import model.Sprint;
 
@@ -25,9 +26,10 @@ public class JunkFoodEatenService
     }
 
     public JunkFoodEaten saveOne(JunkFoodEaten junkFoodEaten){
-        JunkFoodEaten food = new JunkFoodEaten(junkFoodEaten.getName(),
+        JunkFoodEaten food = new JunkFoodEaten(junkFoodEaten.getFoodId(),
                 junkFoodEaten.getPlayerId(), junkFoodEaten.getAmount());
         food.setSprintId(findActiveSprints());
+        food.setName(findFoods(food.getFoodId()));
         entityManager.persist(food);
         return food;
     }
@@ -40,5 +42,11 @@ public class JunkFoodEatenService
 
 
         return id;
+    }
+
+    public String findFoods(Long foodId) {
+        Query query = this.entityManager.createNativeQuery("select name from junk_food where id = "+foodId+"", JunkFood.class);
+        List name = query.getResultList();
+        return name.get(0).toString();
     }
 }
