@@ -1,16 +1,15 @@
 package service;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import model.RequestModel.SprintRM;
 import model.Sprint;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import javax.persistence.Query;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class SprintService {
@@ -28,27 +27,21 @@ public class SprintService {
     }
 
     public Sprint saveOne(SprintRM sprintRM) {
-        Sprint sprint = new Sprint(sprintRM.getName(),sprintRM.getStartDate(),sprintRM.getEndDate(),sprintRM.getActive(),sprintRM.getSprintNumber());
+        Sprint sprint = new Sprint(sprintRM.getName(),sprintRM.getStartDate(),sprintRM.getEndDate(),sprintRM.getSprintNumber());
+        Optional<Sprint> opLastSprint = Arrays.stream(this.findAll())
+                .filter(Sprint::getActive)
+                .findFirst();
+        opLastSprint.ifPresent(value ->{
+            value.setActive(false);
+            this.entityManager.merge(value);
+        });
         this.entityManager.persist(sprint);
         return sprint;
     }
-//    public Sprint[] findActualSprint() {
-//        return this.entityManager.createNamedQuery("Sprints.getActiveSprint", Sprint.class)
-//                .getResultList().toArray(new Sprint[0]);
-//    }
 
-    public ArrayList<Sprint> findActualSprint() {
-
-        //PanacheQuery<PanacheEntityBase> sprint = Sprint.find("active = ?1", true);
-        List sprint = entityManager.createQuery(
-                "select s " +
-                        "from Sprint s " +
-                        "where s.active = :active" )
-                .setParameter( "active", true )
-                .getResultList();
-
-
-        System.out.println();
-        return sprint;
+    public List<Sprint> findActiveSprints() {
+        Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
+        List<Sprint> sprints = query.getResultList();
+        return sprints;
     }
 }

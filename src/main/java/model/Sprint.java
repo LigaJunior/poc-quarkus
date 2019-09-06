@@ -8,14 +8,9 @@ import java.time.Period;
 import java.util.List;
 
 
-@NamedQueries({
 @NamedQuery(name = "Sprints.findAll",
         query = "SELECT f FROM Sprint f ORDER BY f.name",
-        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
-//@NamedQuery(name = "Sprints.getActiveSprint",
-//        query = "SELECT * FROM Sprint where to_date(to_char(NOW(), 'YYYY-MM-DD'), 'YYYY-MM-DD') between  startdate and enddate",
-//        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
-})
+        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
 @javax.persistence.Entity
 @Table(name = "sprint")
 public class Sprint extends Entity {
@@ -29,16 +24,17 @@ public class Sprint extends Entity {
     @ManyToMany(mappedBy = "joinedSprints")
     private List<Player> players;
 
-    public Sprint() {
+    public Sprint(){
+        this.active = true;
         this.setRegistrationDate(LocalDate.now());
     }
 
 
-    public Sprint(String name, LocalDate startDate, LocalDate endDate, Boolean active, Long sprintNumber) {
+    public Sprint(String name, LocalDate startDate, LocalDate endDate, Long sprintNumber) {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.active = active;
+        this.active = true;
         this.sprintNumber = sprintNumber;
         this.setRegistrationDate(LocalDate.now());
     }

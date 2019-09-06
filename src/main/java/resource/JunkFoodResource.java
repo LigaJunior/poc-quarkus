@@ -1,4 +1,4 @@
-package controller;
+package resource;
 
 import model.JunkFood;
 import model.RequestModel.JunkFoodRM;

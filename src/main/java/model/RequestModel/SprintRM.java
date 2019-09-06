@@ -6,7 +6,6 @@ import java.time.Period;
 public class SprintRM {
     private String name;
     private Long sprintNumber;
-    private Boolean active;
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -29,14 +28,6 @@ public class SprintRM {
     public int getDaysDuration() {
         Period intervalPeriod = Period.between(startDate,endDate);
         return intervalPeriod.getDays();
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public LocalDate getStartDate() {

@@ -1,4 +1,4 @@
-package controller;
+package resource;
 
 import model.RequestModel.PlayerRM;
 import service.PlayerService;
