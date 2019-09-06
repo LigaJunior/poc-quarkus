@@ -32,13 +32,4 @@ public class PlayerResource {
                 .build();
     }
 
-//TODO
-//    @GET
-//    @Transactional
-//    @Path("/{playerID}/{sprintID}")
-//    public Response addToSprint(@PathParam("sprintID") Long sprintId,@PathParam("sprintID") Long playerId){
-//        return Response
-//                .ok(this.service.addToSprint(sprintId,playerId))
-//                .build();
-//    }
 }

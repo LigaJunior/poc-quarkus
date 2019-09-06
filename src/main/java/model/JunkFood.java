@@ -6,8 +6,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "junk_food")
 @NamedQuery(name = "JunkFoods.findAll",
-        query = "SELECT f FROM JunkFood f ORDER BY f.name",
-        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
+        query = "SELECT f FROM JunkFood f ORDER BY f.name")
 public class JunkFood extends model.abstracts.Entity {
     @Column(length = 40, unique = true)
     private String name;
