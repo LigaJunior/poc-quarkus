@@ -16,7 +16,7 @@ public class JunkFoodEaten extends model.abstracts.Entity {
 
     public JunkFoodEaten() {
         this.setRegistrationDate(LocalDate.now());
-        //this.setSprintId();
+
     }
 
     public JunkFoodEaten(String name, Long sprintId, Long playerId, int amount) {
@@ -24,6 +24,7 @@ public class JunkFoodEaten extends model.abstracts.Entity {
         this.sprintId = sprintId;
         this.playerId = playerId;
         this.amount = amount;
+        this.setRegistrationDate(LocalDate.now());
     }
 
     public String getName() {
