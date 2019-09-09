@@ -1,14 +1,9 @@
-package model.ViewModel;
+package model.RequestModel;
 
-public class ChocoBoxVM {
+public class ChocoBoxRM {
 
     private int ammount;
     private Long playerId;
-
-    public ChocoBoxVM(int ammount, Long playerId) {
-        this.ammount = ammount;
-        this.playerId = playerId;
-    }
 
     public int getAmmount() {
         return ammount;

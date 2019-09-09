@@ -10,7 +10,6 @@ import java.time.LocalDate;
 public class JunkFoodEaten extends model.abstracts.Entity {
     @Column(length = 40, unique = true)
     private String name;
-    @Transient
     private Long sprintId;
     private Long playerId;
     private int amount;
