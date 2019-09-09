@@ -1,6 +1,5 @@
 package model;
 
-import model.abstracts.Entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -11,9 +10,9 @@ import java.util.List;
 
 @NamedQuery(name = "Sprints.findAll",
         query = "SELECT f FROM Sprint f ORDER BY f.name")
-@javax.persistence.Entity
+@Entity
 @Table(name = "sprint")
-public class Sprint extends Entity {
+public class Sprint extends model.abstracts.Entity {
     @Column(length = 100)
     private String name;
     private Boolean active;
@@ -23,6 +22,9 @@ public class Sprint extends Entity {
 
     @ManyToMany(mappedBy = "sprints", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Player> players = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sprint", cascade = CascadeType.PERSIST)
+    private List<ConsumptionHistory> history;
 
     public Sprint(){
         this.active = true;
@@ -90,5 +92,9 @@ public class Sprint extends Entity {
 
     public void addPlayer(Player player){
         this.players.add(player);
+    }
+
+    public List<ConsumptionHistory> getHistory() {
+        return history;
     }
 }
