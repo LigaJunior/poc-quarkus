@@ -10,6 +10,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,9 +77,8 @@ public class SprintService {
     private PlayerVM convertPlayerToViewModel(Player player){
         return new PlayerVM(player.getId(),player.getName(),player.getRegistrationDate());
     }
-}
 
-    public List<SprintVM> findActiveSprints(String endDate) {
+    public List<SprintVM> changeSprintDeadLine(String endDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(endDate, formatter);
         Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
@@ -88,3 +89,4 @@ public class SprintService {
 
         return sprints;
     }
+}

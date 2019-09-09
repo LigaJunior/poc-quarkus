@@ -44,11 +44,12 @@ public class SprintResource {
                 .ok(this.service.addToSprint(playerId,sprintId))
                 .build();
     }
-}
 
     @Path("/{endDate}")
     @Transactional
     @GET
     public Response findActiveSprints(@PathParam("endDate")String endDate){
-        return Response.ok( this.service.findActiveSprints(endDate)).status(200).build();
+        return Response.ok( this.service.changeSprintDeadLine(endDate)).status(200).build();
     }
+}
+
