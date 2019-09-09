@@ -49,15 +49,11 @@ public class SprintService {
         return convertSprintToViewModel(sprint);
     }
 
-    public List<SprintVM> findActiveSprints(String endDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(endDate, formatter);
+    public List<SprintVM> findActiveSprints() {
         Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
         List<Sprint> source = query.getResultList();
         List<SprintVM> sprints = new ArrayList<>();
         source.forEach(s->sprints.add(convertSprintToViewModel(s)));
-        sprints.forEach(s->s.setEndDate(localDate));
-
         return sprints;
     }
 
@@ -80,5 +76,17 @@ public class SprintService {
     }
     private PlayerVM convertPlayerToViewModel(Player player){
         return new PlayerVM(player.getId(),player.getName(),player.getRegistrationDate());
+    }
+
+    public List<SprintVM> changeSprintDeadLine(String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(endDate, formatter);
+        Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
+        List<Sprint> source = query.getResultList();
+        List<SprintVM> sprints = new ArrayList<>();
+        source.forEach(s->sprints.add(convertSprintToViewModel(s)));
+        sprints.forEach(s->s.setEndDate(localDate));
+
+        return sprints;
     }
 }

@@ -10,6 +10,7 @@ import java.util.Objects;
 
 @MappedSuperclass
 public class Entity extends PanacheEntityBase {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
