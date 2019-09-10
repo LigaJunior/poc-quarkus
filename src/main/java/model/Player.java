@@ -1,26 +1,30 @@
 package model;
 
-import model.abstracts.Entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@javax.persistence.Entity
+@Entity
 @Table(name = "player")
 @NamedQuery(name = "Players.findAll",
-        query = "SELECT f FROM Player f ORDER BY f.name",
-        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true") )
-public class Player extends Entity {
+        query = "SELECT f FROM Player f ORDER BY f.name")
+public class Player extends model.abstracts. Entity {
     private String name;
 
-    @ManyToMany
-    @JoinTable(name="player_sprints")
-    private List<Sprint> joinedSprints;
+    @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
+    private List<ConsumptionHistory> history;
+
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "sprint_player",
+            joinColumns = {@JoinColumn(name = "player_id")},
+            inverseJoinColumns = {@JoinColumn(name = "sprint_id")}
+    )
+    private List<Sprint> sprints = new ArrayList<>();
 
     public Player() {
-        this.joinedSprints = new ArrayList<>();
         this.setRegistrationDate(LocalDate.now());
     }
 
@@ -37,15 +41,16 @@ public class Player extends Entity {
         this.name = name;
     }
 
-    public List<Sprint> getJoinedSprints() {
-        return joinedSprints;
+    public List<Sprint> getSprints() {
+        return sprints;
     }
 
-    public void setJoinedSprints(List<Sprint> joinedSprints) {
-        this.joinedSprints = joinedSprints;
+    public void addSprint(Sprint sprint){
+        this.sprints.add(sprint);
+        sprint.getPlayers().add(this);
     }
 
-    public void addToJoinedSprints(Sprint newSprint) {
-        this.joinedSprints.add(newSprint);
+    public List<ConsumptionHistory> getHistory() {
+        return history;
     }
 }

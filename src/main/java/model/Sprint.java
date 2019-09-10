@@ -1,19 +1,18 @@
 package model;
 
-import model.abstracts.Entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @NamedQuery(name = "Sprints.findAll",
-        query = "SELECT f FROM Sprint f ORDER BY f.name",
-        hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
-@javax.persistence.Entity
+        query = "SELECT f FROM Sprint f ORDER BY f.name")
+@Entity
 @Table(name = "sprint")
-public class Sprint extends Entity {
+public class Sprint extends model.abstracts.Entity {
     @Column(length = 100)
     private String name;
     private Boolean active;
@@ -21,14 +20,16 @@ public class Sprint extends Entity {
     private LocalDate endDate;
     private Long sprintNumber;
 
-    @ManyToMany(mappedBy = "joinedSprints")
-    private List<Player> players;
+    @ManyToMany(mappedBy = "sprints", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private List<Player> players = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sprint", cascade = CascadeType.PERSIST)
+    private List<ConsumptionHistory> history;
 
     public Sprint(){
         this.active = true;
         this.setRegistrationDate(LocalDate.now());
     }
-
 
     public Sprint(String name, LocalDate startDate, LocalDate endDate, Long sprintNumber) {
         this.name = name;
@@ -84,11 +85,16 @@ public class Sprint extends Entity {
         this.endDate = endDate;
     }
 
+
     public List<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(List<Player> players) {
-        this.players = players;
+    public void addPlayer(Player player){
+        this.players.add(player);
+    }
+
+    public List<ConsumptionHistory> getHistory() {
+        return history;
     }
 }

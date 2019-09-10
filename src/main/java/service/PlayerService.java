@@ -3,10 +3,13 @@ package service;
 import model.Player;
 import model.RequestModel.PlayerRM;
 import model.Sprint;
+import model.ViewModel.PlayerVM;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 public class PlayerService {
@@ -17,25 +20,21 @@ public class PlayerService {
     }
     private EntityManager entityManager;
 
-    public Player[] findAll() {
-        return this.entityManager.createNamedQuery("Players.findAll", Player.class)
-                .getResultList().toArray(new Player[0]);
+    public List<PlayerVM> findAll() {
+        List<Player> players = this.entityManager.createNamedQuery("Players.findAll", Player.class)
+                .getResultList();
+        List<PlayerVM> playersVM = new ArrayList<>();
+        players.forEach(p-> playersVM.add(convertPlayerToViewModel(p)));
+        return playersVM;
     }
 
-    public Player saveOne(PlayerRM playerRM) {
+    public PlayerVM saveOne(PlayerRM playerRM) {
         Player player = new Player(playerRM.getName());
         this.entityManager.persist(player);
-        return player;
+        return convertPlayerToViewModel(player);
     }
 
-    //TODO
-    public Player addToSprint(Long sprintId, Long playerId){
-        Sprint sprint  = entityManager.find(Sprint.class,sprintId);
-        Player player  = entityManager.find(Player.class,playerId);
-
-        player.addToJoinedSprints(sprint);
-        this.entityManager.merge(player);
-
-        return player;
+    private PlayerVM convertPlayerToViewModel(Player player){
+        return new PlayerVM(player.getId(),player.getName(),player.getRegistrationDate());
     }
 }
