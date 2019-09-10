@@ -36,6 +36,13 @@ public class SprintResource {
         return Response.ok( this.service.findActiveSprints()).status(200).build();
     }
 
+    @Path("extend")
+    @PUT
+    @Transactional
+    public Response findActiveSprints(String endDate){
+        return Response.ok( this.service.extendActiveSprintDeadLine(endDate)).status(200).build();
+    }
+
     @GET
     @Transactional
     @Path("/{playerID}/{sprintID}")
