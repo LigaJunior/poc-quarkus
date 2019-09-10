@@ -1,13 +1,7 @@
 package model;
-<<<<<<< HEAD
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
-=======
-
-import javax.persistence.*;
-import java.time.LocalDate;
->>>>>>> dev-fernando
 
 @Entity
 @Table(name = "junk_food")
@@ -17,12 +11,9 @@ public class JunkFood extends model.abstracts.Entity {
     @Column(length = 40, unique = true)
     private String name;
 
-<<<<<<< HEAD
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "junkFood")
     private List<ConsumptionHistory> history;
 
-=======
->>>>>>> dev-fernando
     public JunkFood() {
         this.setRegistrationDate(LocalDate.now());
     }
@@ -38,11 +29,8 @@ public class JunkFood extends model.abstracts.Entity {
     public void setName(String name) {
         this.name = name;
     }
-<<<<<<< HEAD
 
     public List<ConsumptionHistory> getHistory() {
         return history;
     }
-=======
->>>>>>> dev-fernando
 }

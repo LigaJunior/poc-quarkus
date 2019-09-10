@@ -1,27 +1,14 @@
 package resource;
 
 import model.RequestModel.SprintRM;
-<<<<<<< HEAD
 import model.ViewModel.ExtendSprintVM;
-=======
-import model.Sprint;
->>>>>>> dev-fernando
 import service.SprintService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-<<<<<<< HEAD
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-=======
-import javax.json.bind.annotation.JsonbDateFormat;
-import javax.transaction.Transactional;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import java.time.LocalDate;
-import java.util.List;
->>>>>>> dev-fernando
 
 @Path("sprints")
 @ApplicationScoped
@@ -42,7 +29,6 @@ public class SprintResource {
         return Response.ok(this.service.saveOne(sprintRM)).status(200).build();
     }
 
-<<<<<<< HEAD
     @Path("active")
     @GET
     public Response findActiveSprints(){
@@ -63,16 +49,6 @@ public class SprintResource {
     }
 
     @PATCH
-=======
-    @Path("/{endDate}")
-    @Transactional
-    @GET
-    public Response findActiveSprints(@PathParam("endDate")String endDate){
-        return Response.ok( this.service.findActiveSprints(endDate)).status(200).build();
-    }
-
-    @GET
->>>>>>> dev-fernando
     @Transactional
     @Path("/{playerID}/{sprintID}")
     public Response addToSprint(@PathParam("playerID") Long playerId,@PathParam("sprintID") Long sprintId){

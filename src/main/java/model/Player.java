@@ -1,18 +1,11 @@
 package model;
 
-<<<<<<< HEAD
-=======
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import model.ViewModel.PlayerVM;
-import model.abstracts.Entity;
->>>>>>> dev-fernando
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
 @Entity
 @Table(name = "player")
 @NamedQuery(name = "Players.findAll",
@@ -23,15 +16,6 @@ public class Player extends model.abstracts. Entity {
     @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
     private List<ConsumptionHistory> history;
 
-=======
-@javax.persistence.Entity
-@Table(name = "player")
-@NamedQuery(name = "Players.findAll",
-        query = "SELECT f FROM Player f ORDER BY f.name")
-public class Player extends Entity {
-    private String name;
-
->>>>>>> dev-fernando
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
             name = "sprint_player",
@@ -66,10 +50,7 @@ public class Player extends Entity {
         sprint.getPlayers().add(this);
     }
 
-<<<<<<< HEAD
     public List<ConsumptionHistory> getHistory() {
         return history;
     }
-=======
->>>>>>> dev-fernando
 }

@@ -8,7 +8,6 @@ import java.time.LocalDate;
 @NamedQuery(name = "JunkFoodsEaten.findAll",
         query = "SELECT f FROM JunkFoodEaten f ORDER BY f.name")
 public class JunkFoodEaten extends model.abstracts.Entity {
-    @Column(length = 40, unique = true)
     private String name;
     private Long sprintId;
     private Long playerId;
