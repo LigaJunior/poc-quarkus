@@ -56,4 +56,13 @@ public class SprintResource {
                 .ok(this.service.addToSprint(playerId,sprintId))
                 .build();
     }
+
+    @PATCH
+    @Transactional
+    @Path("allPlayerRank")
+    public Response getPlayerRankOfAllSprints(){
+        return Response
+                .ok(this.service.getPlayerRankOfAllSprints())
+                .build();
+    }
 }

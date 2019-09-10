@@ -96,4 +96,12 @@ public class SprintService {
         }
         return ranking;
     }
+    public Object getPlayerRankOfAllSprints(){
+        Query query= this.entityManager.createNativeQuery("SELECT player_id, SUM(amount) " +
+                "as amount FROM consumption_history  GROUP BY player_id ORDER BY sum(amount) DESC limit 1");
+       Object ob = query.getResultList();
+
+        return ob.toString();
+    }
+
 }
