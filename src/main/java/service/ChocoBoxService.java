@@ -1,9 +1,7 @@
 package service;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Parameters;
+
 import model.ChocoBox;
 import model.Player;
 import model.RequestModel.ChocoBoxRM;
@@ -11,7 +9,7 @@ import model.RequestModel.ChocoBoxRM;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @ApplicationScoped
