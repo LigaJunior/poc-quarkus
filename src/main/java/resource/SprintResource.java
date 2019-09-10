@@ -1,7 +1,7 @@
 package resource;
 
 import model.RequestModel.SprintRM;
-import model.Sprint;
+import model.ViewModel.ExtendSprintVM;
 import service.SprintService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("sprints")
 @ApplicationScoped
@@ -36,14 +35,20 @@ public class SprintResource {
         return Response.ok( this.service.findActiveSprints()).status(200).build();
     }
 
+    @Path("active/player-rank")
+    @GET
+    public Response getPlayerRankForActiveSprint(){
+        return Response.ok( this.service.getPlayerRankForActiveSprint()).status(200).build();
+    }
+
     @Path("extend")
     @PUT
     @Transactional
-    public Response findActiveSprints(String endDate){
+    public Response findActiveSprints(ExtendSprintVM endDate){
         return Response.ok( this.service.extendActiveSprintDeadLine(endDate)).status(200).build();
     }
 
-    @GET
+    @PATCH
     @Transactional
     @Path("/{playerID}/{sprintID}")
     public Response addToSprint(@PathParam("playerID") Long playerId,@PathParam("sprintID") Long sprintId){

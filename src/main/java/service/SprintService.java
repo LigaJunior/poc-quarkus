@@ -1,9 +1,12 @@
 package service;
 
+import model.ConsumptionHistory;
 import model.Player;
 import model.RequestModel.SprintRM;
 import model.Sprint;
+import model.ViewModel.ExtendSprintVM;
 import model.ViewModel.PlayerVM;
+import model.ViewModel.SprintPlayerRankedVM;
 import model.ViewModel.SprintVM;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,10 +15,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static model.ViewModel.VMConverter.*;
 
 @ApplicationScoped
 public class SprintService {
@@ -30,9 +33,7 @@ public class SprintService {
     public List<SprintVM> findAll() {
         List<Sprint> source = this.entityManager.createNamedQuery("Sprints.findAll", Sprint.class)
                 .getResultList();
-        List<SprintVM> converted = new ArrayList<>();
-        source.forEach(s->converted.add(convertSprintToViewModel(s)));
-        return converted;
+        return convertSprints(source);
     }
 
     public SprintVM saveOne(SprintRM sprintRM) {
@@ -46,26 +47,22 @@ public class SprintService {
             this.entityManager.merge(value);
         });
         this.entityManager.persist(sprint);
-        return convertSprintToViewModel(sprint);
+        return convertSprint(sprint);
     }
 
     public List<SprintVM> findActiveSprints() {
         Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
         List<Sprint> source = query.getResultList();
-        List<SprintVM> sprints = new ArrayList<>();
-        source.forEach(s->sprints.add(convertSprintToViewModel(s)));
-        return sprints;
+        return convertSprints(source);
     }
 
-    public List<SprintVM> extendActiveSprintDeadLine(String endDate) {
+    public List<SprintVM> extendActiveSprintDeadLine(ExtendSprintVM endDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(endDate, formatter);
+        LocalDate localDate = LocalDate.parse(endDate.getNewDeadLine(), formatter);
         Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
         List<Sprint> source = query.getResultList();
-        List<SprintVM> sprints = new ArrayList<>();
-        source.forEach(s->sprints.add(convertSprintToViewModel(s)));
+        List<SprintVM> sprints = convertSprints(source);
         sprints.forEach(s->s.setEndDate(localDate));
-
         return sprints;
     }
 
@@ -75,18 +72,28 @@ public class SprintService {
 
         player.addSprint(sprint);
         this.entityManager.merge(player);
-        return convertPlayerToViewModel(player);
+        return convertPlayer(player);
     }
 
-    private SprintVM convertSprintToViewModel(Sprint sprint){
-        SprintVM convertedSprint = new SprintVM(sprint.getId(),sprint.getName(),sprint.getActive(),sprint.getStartDate(),
-                sprint.getEndDate(),sprint.getSprintNumber(),sprint.getRegistrationDate());
-        List<PlayerVM> playersVM = new ArrayList<>();
-        sprint.getPlayers().forEach(p-> playersVM.add(convertPlayerToViewModel(p)));
-        convertedSprint.setPlayers(playersVM);
-        return convertedSprint;
-    }
-    private PlayerVM convertPlayerToViewModel(Player player){
-        return new PlayerVM(player.getId(),player.getName(),player.getRegistrationDate());
+
+
+    public List<SprintPlayerRankedVM> getPlayerRankForActiveSprint() {
+        List<SprintPlayerRankedVM> ranking = new ArrayList<>();
+        List<Sprint> activeSprintQuery = this.entityManager.createNativeQuery("select * from sprint where active = true",Sprint.class).getResultList();
+        Optional<Sprint> opActiveSprint = Optional.ofNullable(activeSprintQuery.get(0));
+        if (opActiveSprint.isPresent()){
+            Sprint activeSprint = opActiveSprint.get();
+            List<Player> players = activeSprint.getPlayers();
+            ranking = players.stream()
+                    .map(player -> {
+                        SprintPlayerRankedVM obj = new SprintPlayerRankedVM();
+                        obj.setPlayer(convertPlayer(player));
+                        obj.setAmount(player.getHistory().stream().mapToLong(ConsumptionHistory::getAmount).sum());
+                        return obj;
+                    })
+                    .sorted(((o1, o2) -> Long.compare(o2.getAmount(), o1.getAmount())))
+                    .collect(Collectors.toList());
+        }
+        return ranking;
     }
 }
