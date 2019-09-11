@@ -2,6 +2,7 @@ package resource;
 
 import model.RequestModel.SprintRM;
 import model.ViewModel.ExtendSprintVM;
+import model.ViewModel.SprintVM;
 import service.SprintService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 
 @Path("sprints")
 @ApplicationScoped
@@ -26,7 +28,11 @@ public class SprintResource {
     @POST
     @Transactional
     public Response create(SprintRM sprintRM) {
-        return Response.ok(this.service.saveOne(sprintRM)).status(200).build();
+        //TODO: check if that verification is the best practice or not
+        Optional<SprintVM> sprint = Optional.ofNullable(this.service.saveOne(sprintRM));
+        if (sprint.isPresent()) return Response.ok(sprint.get()).status(200).build();
+        return Response.ok().status(400).build();
+
     }
 
     @Path("active")

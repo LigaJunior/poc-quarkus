@@ -16,6 +16,7 @@ import javax.persistence.Query;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.LongAccumulator;
 import java.util.stream.Collectors;
 
 import static model.ViewModel.VMConverter.*;
@@ -37,6 +38,7 @@ public class SprintService {
     }
 
     public SprintVM saveOne(SprintRM sprintRM) {
+        if (!isSprintValid(sprintRM)) return null;
         Sprint sprint = new Sprint(sprintRM.getName(),sprintRM.getStartDate(),sprintRM.getEndDate(),sprintRM.getSprintNumber());
         Optional<Sprint> opLastSprint = this.entityManager.createNamedQuery("Sprints.findAll", Sprint.class)
                 .getResultList().stream()
@@ -48,6 +50,22 @@ public class SprintService {
         });
         this.entityManager.persist(sprint);
         return convertSprint(sprint);
+    }
+
+    private boolean isSprintValid(SprintRM sprintRM) {
+        boolean validationStatus = false;
+        // it only validates if already exists a sprint with the same number in database
+        boolean sprintNumberAlreadyExists = this.entityManager.createNativeQuery("select * from sprint where sprintnumber =" + sprintRM.getSprintNumber() + ";", Sprint.class)
+                .getResultStream()
+                .findFirst()
+                .isPresent();
+        // it only validates if the given end date is after start date
+        boolean endDateIsAfterStartDate = sprintRM.getEndDate().isAfter(sprintRM.getStartDate());
+
+        validationStatus = !sprintNumberAlreadyExists && endDateIsAfterStartDate;
+
+        return validationStatus;
+
     }
 
     public List<SprintVM> findActiveSprints() {
@@ -88,7 +106,10 @@ public class SprintService {
                     .map(player -> {
                         SprintPlayerRankedVM obj = new SprintPlayerRankedVM();
                         obj.setPlayer(convertPlayer(player));
-                        obj.setAmount(player.getHistory().stream().mapToLong(ConsumptionHistory::getAmount).sum());
+                        ConsumptionHistory currentHistory = player.getHistory().stream()
+                                .filter(h -> h.getSprint().getId().equals(activeSprint.getId()))
+                                .findFirst().get();
+                        obj.setAmount(currentHistory.getAmount());
                         return obj;
                     })
                     .sorted(((o1, o2) -> Long.compare(o2.getAmount(), o1.getAmount())))
