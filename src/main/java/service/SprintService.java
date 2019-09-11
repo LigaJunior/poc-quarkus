@@ -115,6 +115,26 @@ public class SprintService {
 
         return playerRank;
     }
+
+
+    public SprintRankedJunkFoodVM getSprintRankedJunkFood() {
+        SprintRankedJunkFoodVM sprintFoodRank = new SprintRankedJunkFoodVM();
+        Query query = this.entityManager.createNativeQuery("SELECT f.sprint_id, SUM(f.amount) as amount " +
+                "FROM consumption_history f GROUP BY sprint_id ORDER BY  sum(f.amount) DESC limit 1");
+        Object[] results = (Object[]) query.getSingleResult();
+        Sprint sprintNameNumber = new Sprint();
+
+        sprintNameNumber = Sprint.findById(((BigInteger) results[0]).longValue());
+        Long amount = ((BigDecimal) results[1]).longValue();
+
+        Long sprintNumber = sprintNameNumber.getSprintNumber();
+        String name = sprintNameNumber.getName();
+
+        sprintFoodRank.setName(name);
+        sprintFoodRank.setAmount(amount);
+        sprintFoodRank.setSprintNumber(sprintNumber);
+
+        return sprintFoodRank;
     }
 
 }

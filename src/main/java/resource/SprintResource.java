@@ -65,4 +65,14 @@ public class SprintResource {
                 .ok(this.service.getPlayerRankOfAllSprints())
                 .build();
     }
+
+    @PATCH
+    @Transactional
+    @Path("sprintRankedFood")
+    public Response getSprintRankedJunkFood(){
+        return Response
+                .ok(this.service.getSprintRankedJunkFood())
+                .build();
+    }
+
 }
