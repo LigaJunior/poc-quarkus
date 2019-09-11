@@ -1,4 +1,4 @@
-package model;
+package model.ViewModel;
 
 import javax.persistence.EntityResult;
 import javax.persistence.FieldResult;
@@ -11,14 +11,14 @@ import javax.persistence.SqlResultSetMapping;
 //                fields = {
 //                        @FieldResult(name = "amount", column = "playerid"),
 //                        @FieldResult(name = "player", column = "amount")}))
-public class AllPlayerRanked {
+public class AllPlayerRankedVM {
     private Long amount;
     private Long player;
 
-    public AllPlayerRanked() {
+    public AllPlayerRankedVM() {
     }
 
-    public AllPlayerRanked(Long amount, Long player) {
+    public AllPlayerRankedVM(Long amount, Long player) {
         this.amount = amount;
         this.player = player;
     }
