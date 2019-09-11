@@ -1,5 +1,6 @@
 package service;
 
+import model.AllPlayerRanked;
 import model.ConsumptionHistory;
 import model.Player;
 import model.RequestModel.SprintRM;
@@ -13,6 +14,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -96,12 +99,25 @@ public class SprintService {
         }
         return ranking;
     }
-    public Object getPlayerRankOfAllSprints(){
-        Query query= this.entityManager.createNativeQuery("SELECT player_id, SUM(amount) " +
-                "as amount FROM consumption_history  GROUP BY player_id ORDER BY sum(amount) DESC limit 1");
-       Object ob = query.getResultList();
+    public AllPlayerRanked getPlayerRankOfAllSprints(){
+        AllPlayerRanked play = new AllPlayerRanked();
 
-        return ob.toString();
+        Query query =  this.entityManager.createNativeQuery("SELECT f.player_id, SUM(f.amount) as amount " +
+                "FROM consumption_history f GROUP BY player_id ORDER BY  sum(f.amount) DESC limit 1");
+        Object[] results = (Object[]) query.getSingleResult();
+        Long player = ((BigInteger)results[0]).longValue();
+        Long amount = ((BigDecimal)results[1]).longValue();
+        play.setPlayer(player);
+        play.setAmount(amount);
+
+//        results.forEach((record) -> {
+//            Long player = ((BigInteger)record[0]).longValue();
+//            Long amount = ((BigDecimal)record[1]).longValue();
+//            play.setPlayer(player);
+//            play.setAmount(amount);
+//        });
+
+        return play;
     }
 
 }
