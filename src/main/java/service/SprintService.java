@@ -136,5 +136,28 @@ public class SprintService {
 
         return sprintFoodRank;
     }
+        public List<SprintRankOfFoodConsumptionVM> getSprintRankOfFoodConsumption (){
+        String sql = "SELECT sprint.name as sprint, " +
+                "junk_food.name as food, SUM(amount) as amount " +
+                "FROM ((consumption_history " +
+                "INNER JOIN sprint ON sprint.id = sprint_id) " +
+                "INNER JOIN junk_food ON junk_food.id = junkfood_id) " +
+                "WHERE sprint_id = 1 " +
+                "GROUP BY sprint.name, junk_food.name ORDER BY sum(amount) DESC";
+            ArrayList<SprintRankOfFoodConsumptionVM> rankFoodOfSprint = new ArrayList<SprintRankOfFoodConsumptionVM>();
+            Query query = this.entityManager.createNativeQuery(sql);
+            List<Object[]> results =  query.getResultList();
+
+            results.forEach((record) -> {
+                String sprintName = (String)record[0];
+                String food = (String)record[1];
+                Long amount = ((BigDecimal)record[2]).longValue();
+                rankFoodOfSprint.add(new SprintRankOfFoodConsumptionVM(sprintName, food, amount));
+
+        });
+            return rankFoodOfSprint;
+    }
 
 }
+
+

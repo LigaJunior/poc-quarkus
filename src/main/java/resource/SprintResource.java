@@ -75,4 +75,12 @@ public class SprintResource {
                 .build();
     }
 
+    @PATCH
+    @Transactional
+    @Path("sprintRankOfFoodConsumption")
+    public Response getSprintRankOfFoodConsumption(){
+        return Response
+                .ok(this.service.getSprintRankOfFoodConsumption())
+                .build();
+    }
 }
