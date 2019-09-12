@@ -1,11 +1,9 @@
 package model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "choco_box")

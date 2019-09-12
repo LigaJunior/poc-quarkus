@@ -1,5 +1,6 @@
 package model.ViewModel;
 
+import model.JunkFood;
 import model.Player;
 import model.Sprint;
 
@@ -27,5 +28,14 @@ public class VMConverter {
         List<PlayerVM> convertedPlayers = new ArrayList<>();
         source.forEach(p->convertedPlayers.add(convertPlayer(p)));
         return convertedPlayers;
+    }
+
+    public static JunkFoodVM convertJunkFood(JunkFood junkFood){
+        return new JunkFoodVM(junkFood.getId(),junkFood.getName(),junkFood.getRegistrationDate());
+    }
+    public static List<JunkFoodVM> convertJunkFoods(List<JunkFood> source){
+        List<JunkFoodVM> convertedFoods = new ArrayList<>();
+        source.forEach(f->convertedFoods.add(convertJunkFood(f)));
+        return convertedFoods;
     }
 }
