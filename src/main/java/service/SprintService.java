@@ -122,32 +122,34 @@ public class SprintService {
         return ranking;
     }
 
-    public AllPlayerRankedVM getPlayerRankOfAllSprints(){
-        AllPlayerRankedVM playerRank = new AllPlayerRankedVM();
+    public List<AllPlayerRankedVM> getPlayerRankOfAllSprints(){
+        List<AllPlayerRankedVM> playerRank = new ArrayList<>();
 
         Query query =  this.entityManager.createNativeQuery("SELECT f.player_id, SUM(f.amount) as amount " +
-                "FROM consumption_history f GROUP BY player_id ORDER BY  sum(f.amount) DESC limit 1");
-        Object[] results = (Object[]) query.getSingleResult();
-        Long player = ((BigInteger)results[0]).longValue();
-        Long amount = ((BigDecimal)results[1]).longValue();
-        playerRank.setPlayer(player);
-        playerRank.setAmount(amount);
+                "FROM consumption_history f GROUP BY player_id ORDER BY  sum(f.amount) DESC");
+        List<Object[]> results =  query.getResultList();
+        results.forEach((record) -> {
+            Long player = ((BigInteger)record[0]).longValue();
+            Long amount = ((BigDecimal)record[1]).longValue();
+
+            playerRank.add(new AllPlayerRankedVM(amount, player));
+        });
+
 
         return playerRank;
     }
 
     public SprintRankedJunkFoodVM getSprintRankedJunkFood() {
         SprintRankedJunkFoodVM sprintFoodRank = new SprintRankedJunkFoodVM();
-        Query query = this.entityManager.createNativeQuery("SELECT f.sprint_id, SUM(f.amount) as amount " +
-                "FROM consumption_history f GROUP BY sprint_id ORDER BY  sum(f.amount) DESC limit 1");
+        Query query = this.entityManager.createNativeQuery("SELECT sprint.name, sprint.sprintnumber as sprintnumber, SUM(amount) as amount " +
+                "FROM consumption_history " +
+                "INNER JOIN sprint ON sprint.id = sprint_id " +
+                "GROUP BY sprint.name, sprint.sprintnumber ORDER BY  sum(amount) DESC limit 1");
         Object[] results = (Object[]) query.getSingleResult();
-        Sprint sprintNameNumber = new Sprint();
 
-        sprintNameNumber = Sprint.findById(((BigInteger) results[0]).longValue());
-        Long amount = ((BigDecimal) results[1]).longValue();
-
-        Long sprintNumber = sprintNameNumber.getSprintNumber();
-        String name = sprintNameNumber.getName();
+        String name = (String) results[0];
+        Long sprintNumber = ((BigInteger) results[1]).longValue();
+        Long amount = ((BigDecimal) results[2]).longValue();
 
         sprintFoodRank.setName(name);
         sprintFoodRank.setAmount(amount);

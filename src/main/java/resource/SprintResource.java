@@ -63,7 +63,7 @@ public class SprintResource {
 
     @PATCH
     @Transactional
-    @Path("all-rlayer-rank")
+    @Path("all-player-rank")
     public Response getPlayerRankOfAllSprints(){
         return Response
                 .ok(this.service.getPlayerRankOfAllSprints())
