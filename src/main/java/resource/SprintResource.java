@@ -61,7 +61,7 @@ public class SprintResource {
                 .build();
     }
 
-    @PATCH
+    @GET
     @Transactional
     @Path("all-player-rank")
     public Response getPlayerRankOfAllSprints(){
@@ -70,7 +70,7 @@ public class SprintResource {
                 .build();
     }
 
-    @PATCH
+    @GET
     @Transactional
     @Path("sprint-ranked-food")
     public Response getSprintRankedJunkFood(){
@@ -79,7 +79,7 @@ public class SprintResource {
                 .build();
     }
 
-    @PATCH
+    @GET
     @Transactional
     @Path("sprint-rank-of-food-consumption")
     public Response getSprintRankOfFoodConsumption(){
