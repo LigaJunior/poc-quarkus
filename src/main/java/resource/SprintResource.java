@@ -63,7 +63,7 @@ public class SprintResource {
 
     @PATCH
     @Transactional
-    @Path("allPlayerRank")
+    @Path("all-rlayer-rank")
     public Response getPlayerRankOfAllSprints(){
         return Response
                 .ok(this.service.getPlayerRankOfAllSprints())
@@ -72,7 +72,7 @@ public class SprintResource {
 
     @PATCH
     @Transactional
-    @Path("sprintRankedFood")
+    @Path("sprint-ranked-food")
     public Response getSprintRankedJunkFood(){
         return Response
                 .ok(this.service.getSprintRankedJunkFood())
@@ -81,7 +81,7 @@ public class SprintResource {
 
     @PATCH
     @Transactional
-    @Path("sprintRankOfFoodConsumption")
+    @Path("sprint-rank-of-food-consumption")
     public Response getSprintRankOfFoodConsumption(){
         return Response
                 .ok(this.service.getSprintRankOfFoodConsumption())
