@@ -13,11 +13,19 @@ import java.util.List;
 @Entity
 @Table(name = "sprint")
 public class Sprint extends model.abstracts.Entity {
-    @Column(length = 100)
+    @Column(name = "name", length = 100)
     private String name;
+
+    @Column(name = "active")
     private Boolean active;
+
+    @Column(name = "start_date")
     private LocalDate startDate;
+
+    @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "sprint_number")
     private Long sprintNumber;
 
     @ManyToMany(mappedBy = "sprints", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

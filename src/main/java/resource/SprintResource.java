@@ -2,7 +2,6 @@ package resource;
 
 import model.RequestModel.SprintRM;
 import model.ViewModel.ExtendSprintVM;
-import model.ViewModel.SprintVM;
 import service.SprintService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -10,7 +9,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("sprints")
 @ApplicationScoped
@@ -18,7 +16,11 @@ import java.util.Optional;
 @Consumes("application/json")
 public class SprintResource {
     @Inject
-    SprintService service;
+    public SprintResource(SprintService service) {
+        this.service = service;
+    }
+
+    private SprintService service;
 
     @GET
     public Response get() {
@@ -28,11 +30,7 @@ public class SprintResource {
     @POST
     @Transactional
     public Response create(SprintRM sprintRM) {
-        //TODO: check if that verification is the best practice or not
-        Optional<SprintVM> sprint = Optional.ofNullable(this.service.saveOne(sprintRM));
-        if (sprint.isPresent()) return Response.ok(sprint.get()).status(200).build();
-        return Response.ok().status(400).build();
-
+        return Response.ok(this.service.saveOne(sprintRM)).status(200).build();
     }
 
     @Path("active")
@@ -89,4 +87,6 @@ public class SprintResource {
                 .ok(this.service.getSprintRankOfFoodConsumption())
                 .build();
     }
+
+
 }

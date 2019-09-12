@@ -1,6 +1,5 @@
 package resource;
 
-import model.ConsumptionHistory;
 import model.RequestModel.ConsumptionHistoryRM;
 import model.ViewModel.ConsumptionHistoryVM;
 import service.ConsumptionHistoryService;

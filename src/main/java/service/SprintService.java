@@ -1,5 +1,7 @@
 package service;
 
+import error.CustomBadRequestException;
+import error.CustomNotFoundException;
 import model.ViewModel.*;
 import model.ConsumptionHistory;
 import model.Player;
@@ -15,7 +17,6 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.LongAccumulator;
 import java.util.stream.Collectors;
 
 import static model.ViewModel.VMConverter.*;
@@ -37,7 +38,7 @@ public class SprintService {
     }
 
     public SprintVM saveOne(SprintRM sprintRM) {
-        if (!isSprintValid(sprintRM)) return null;
+        if (!isSprintValid(sprintRM)) throw new CustomBadRequestException("The given sprint is not valid.");
         Sprint sprint = new Sprint(sprintRM.getName(),sprintRM.getStartDate(),sprintRM.getEndDate(),sprintRM.getSprintNumber());
         Optional<Sprint> opLastSprint = this.entityManager.createNamedQuery("Sprints.findAll", Sprint.class)
                 .getResultList().stream()
@@ -54,17 +55,40 @@ public class SprintService {
     private boolean isSprintValid(SprintRM sprintRM) {
         boolean validationStatus = false;
         // it only validates if already exists a sprint with the same number in database
-        boolean sprintNumberAlreadyExists = this.entityManager.createNativeQuery("select * from sprint where sprintnumber =" + sprintRM.getSprintNumber() + ";", Sprint.class)
+        boolean isSprintNumberUnique = !this.entityManager.createNativeQuery("select * from sprint where sprint_number =" + sprintRM.getSprintNumber() + ";", Sprint.class)
                 .getResultStream()
                 .findFirst()
                 .isPresent();
         // it only validates if the given end date is after start date
-        boolean endDateIsAfterStartDate = sprintRM.getEndDate().isAfter(sprintRM.getStartDate());
+        boolean isEndDateAfterStartDate = sprintRM.getEndDate().isAfter(sprintRM.getStartDate());
+        // it only validates if the name is not empty
+        boolean isNameNotEmpty = !sprintRM.getName().isEmpty();
 
-        validationStatus = !sprintNumberAlreadyExists && endDateIsAfterStartDate;
+        validationStatus = isSprintNumberUnique && isEndDateAfterStartDate && isNameNotEmpty;
 
         return validationStatus;
 
+    }
+    public List<SprintVM> extendActiveSprintDeadLine(ExtendSprintVM endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(endDate.getNewDeadLine(), formatter);
+        Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
+        List<Sprint> source = query.getResultList();
+        if (source.size() <= 0) throw  new CustomNotFoundException("No active sprint found");
+        List<SprintVM> sprints = convertSprints(source);
+        sprints.forEach(s->{
+            if (localDate.isAfter(s.getEndDate())) s.setEndDate(localDate);
+        });
+        return sprints;
+    }
+
+    public PlayerVM addToSprint(Long playerId, Long sprintId){
+        Sprint sprint  = Optional.ofNullable(entityManager.find(Sprint.class,sprintId)).orElseThrow(() -> new CustomNotFoundException("Sprint not found"));
+        Player player  = Optional.ofNullable(entityManager.find(Player.class,playerId)).orElseThrow(() -> new CustomNotFoundException("Player not found"));
+
+        player.addSprint(sprint);
+        this.entityManager.merge(player);
+        return convertPlayer(player);
     }
 
     public List<SprintVM> findActiveSprints() {
@@ -72,27 +96,6 @@ public class SprintService {
         List<Sprint> source = query.getResultList();
         return convertSprints(source);
     }
-
-    public List<SprintVM> extendActiveSprintDeadLine(ExtendSprintVM endDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(endDate.getNewDeadLine(), formatter);
-        Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
-        List<Sprint> source = query.getResultList();
-        List<SprintVM> sprints = convertSprints(source);
-        sprints.forEach(s->s.setEndDate(localDate));
-        return sprints;
-    }
-
-    public PlayerVM addToSprint(Long playerId, Long sprintId){
-        Sprint sprint  = entityManager.find(Sprint.class,sprintId);
-        Player player  = entityManager.find(Player.class,playerId);
-
-        player.addSprint(sprint);
-        this.entityManager.merge(player);
-        return convertPlayer(player);
-    }
-
-
 
     public List<SprintPlayerRankedVM> getPlayerRankForActiveSprint() {
         List<SprintPlayerRankedVM> ranking = new ArrayList<>();
@@ -105,9 +108,11 @@ public class SprintService {
                     .map(player -> {
                         SprintPlayerRankedVM obj = new SprintPlayerRankedVM();
                         obj.setPlayer(convertPlayer(player));
-                        ConsumptionHistory currentHistory = player.getHistory().stream()
+                        Optional<ConsumptionHistory> opCurrentHistory = player.getHistory().stream()
                                 .filter(h -> h.getSprint().getId().equals(activeSprint.getId()))
-                                .findFirst().get();
+                                .findFirst();
+                        if (!opCurrentHistory.isPresent()) obj.setAmount(0L);
+                        ConsumptionHistory currentHistory = opCurrentHistory.get();
                         obj.setAmount(currentHistory.getAmount());
                         return obj;
                     })
@@ -116,6 +121,7 @@ public class SprintService {
         }
         return ranking;
     }
+
     public AllPlayerRankedVM getPlayerRankOfAllSprints(){
         AllPlayerRankedVM playerRank = new AllPlayerRankedVM();
 
@@ -137,7 +143,6 @@ public class SprintService {
         return playerRank;
     }
 
-
     public SprintRankedJunkFoodVM getSprintRankedJunkFood() {
         SprintRankedJunkFoodVM sprintFoodRank = new SprintRankedJunkFoodVM();
         Query query = this.entityManager.createNativeQuery("SELECT f.sprint_id, SUM(f.amount) as amount " +
@@ -157,7 +162,8 @@ public class SprintService {
 
         return sprintFoodRank;
     }
-        public List<SprintRankOfFoodConsumptionVM> getSprintRankOfFoodConsumption (){
+
+    public List<SprintRankOfFoodConsumptionVM> getSprintRankOfFoodConsumption (){
         String sql = "SELECT sprint.name as sprint, " +
                 "junk_food.name as food, SUM(amount) as amount " +
                 "FROM ((consumption_history " +
@@ -176,7 +182,7 @@ public class SprintService {
                 rankFoodOfSprint.add(new SprintRankOfFoodConsumptionVM(sprintName, food, amount));
 
         });
-            return rankFoodOfSprint;
+        return rankFoodOfSprint;
     }
 
 }
