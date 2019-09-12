@@ -1,18 +1,17 @@
 package service;
 
+import model.ViewModel.*;
 import model.ConsumptionHistory;
 import model.Player;
 import model.RequestModel.SprintRM;
 import model.Sprint;
-import model.ViewModel.ExtendSprintVM;
-import model.ViewModel.PlayerVM;
-import model.ViewModel.SprintPlayerRankedVM;
-import model.ViewModel.SprintVM;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -117,4 +116,69 @@ public class SprintService {
         }
         return ranking;
     }
+    public AllPlayerRankedVM getPlayerRankOfAllSprints(){
+        AllPlayerRankedVM playerRank = new AllPlayerRankedVM();
+
+        Query query =  this.entityManager.createNativeQuery("SELECT f.player_id, SUM(f.amount) as amount " +
+                "FROM consumption_history f GROUP BY player_id ORDER BY  sum(f.amount) DESC limit 1");
+        Object[] results = (Object[]) query.getSingleResult();
+        Long player = ((BigInteger)results[0]).longValue();
+        Long amount = ((BigDecimal)results[1]).longValue();
+        playerRank.setPlayer(player);
+        playerRank.setAmount(amount);
+
+//        results.forEach((record) -> {
+//            Long player = ((BigInteger)record[0]).longValue();
+//            Long amount = ((BigDecimal)record[1]).longValue();
+//            playerRank.setPlayer(player);
+//            playerRank.setAmount(amount);
+//        });
+
+        return playerRank;
+    }
+
+
+    public SprintRankedJunkFoodVM getSprintRankedJunkFood() {
+        SprintRankedJunkFoodVM sprintFoodRank = new SprintRankedJunkFoodVM();
+        Query query = this.entityManager.createNativeQuery("SELECT f.sprint_id, SUM(f.amount) as amount " +
+                "FROM consumption_history f GROUP BY sprint_id ORDER BY  sum(f.amount) DESC limit 1");
+        Object[] results = (Object[]) query.getSingleResult();
+        Sprint sprintNameNumber = new Sprint();
+
+        sprintNameNumber = Sprint.findById(((BigInteger) results[0]).longValue());
+        Long amount = ((BigDecimal) results[1]).longValue();
+
+        Long sprintNumber = sprintNameNumber.getSprintNumber();
+        String name = sprintNameNumber.getName();
+
+        sprintFoodRank.setName(name);
+        sprintFoodRank.setAmount(amount);
+        sprintFoodRank.setSprintNumber(sprintNumber);
+
+        return sprintFoodRank;
+    }
+        public List<SprintRankOfFoodConsumptionVM> getSprintRankOfFoodConsumption (){
+        String sql = "SELECT sprint.name as sprint, " +
+                "junk_food.name as food, SUM(amount) as amount " +
+                "FROM ((consumption_history " +
+                "INNER JOIN sprint ON sprint.id = sprint_id) " +
+                "INNER JOIN junk_food ON junk_food.id = junkfood_id) " +
+                "WHERE sprint_id = 1 " +
+                "GROUP BY sprint.name, junk_food.name ORDER BY sum(amount) DESC";
+            ArrayList<SprintRankOfFoodConsumptionVM> rankFoodOfSprint = new ArrayList<SprintRankOfFoodConsumptionVM>();
+            Query query = this.entityManager.createNativeQuery(sql);
+            List<Object[]> results =  query.getResultList();
+
+            results.forEach((record) -> {
+                String sprintName = (String)record[0];
+                String food = (String)record[1];
+                Long amount = ((BigDecimal)record[2]).longValue();
+                rankFoodOfSprint.add(new SprintRankOfFoodConsumptionVM(sprintName, food, amount));
+
+        });
+            return rankFoodOfSprint;
+    }
+
 }
+
+

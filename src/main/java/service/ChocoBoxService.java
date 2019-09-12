@@ -1,9 +1,5 @@
 package service;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Parameters;
 import model.ChocoBox;
 import model.Player;
 import model.RequestModel.ChocoBoxRM;
@@ -11,7 +7,11 @@ import model.RequestModel.ChocoBoxRM;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
+import javax.persistence.Query;
+
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 @ApplicationScoped
@@ -30,17 +30,20 @@ public class ChocoBoxService{
 
     public ChocoBox saveOne(ChocoBoxRM chocoBoxRM) {
         Player name = Player.findById(chocoBoxRM.getPlayerId());
-        ChocoBox choco = new ChocoBox(name.getName(), chocoBoxRM.getAmmount(), chocoBoxRM.getPlayerId(), false);
-        entityManager.persist(choco);
+        ChocoBox choco = new ChocoBox(name.getName(), chocoBoxRM.getAmmount(), chocoBoxRM.getPlayerId(), false, null);
+        this.entityManager.persist(choco);
         return choco;
     }
 
 public ChocoBox updateChoco(Long playerId){
-    PanacheQuery<ChocoBox> choco = ChocoBox.find("playerid = ?1 and paidout = ?2", playerId, false);
-    List<ChocoBox> pages = choco.list();
+    Query query =  this.entityManager.createNativeQuery("SELECT * from choco_box where playerid="+playerId+
+            " and paidout = false", ChocoBox.class);
+    List<ChocoBox> chocob = query.getResultList();
+    chocob.sort(Comparator.comparing((ChocoBox::getRegistrationDate)).reversed());
+    chocob.get(0).setPaidOut(true);
+    chocob.get(0).setPaidOutDate(LocalDate.now());
 
-
-return pages.get(0);
+return chocob.get(0);
 }
 
 }

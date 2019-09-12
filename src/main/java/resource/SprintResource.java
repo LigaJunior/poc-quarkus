@@ -62,4 +62,31 @@ public class SprintResource {
                 .ok(this.service.addToSprint(playerId,sprintId))
                 .build();
     }
+
+    @PATCH
+    @Transactional
+    @Path("allPlayerRank")
+    public Response getPlayerRankOfAllSprints(){
+        return Response
+                .ok(this.service.getPlayerRankOfAllSprints())
+                .build();
+    }
+
+    @PATCH
+    @Transactional
+    @Path("sprintRankedFood")
+    public Response getSprintRankedJunkFood(){
+        return Response
+                .ok(this.service.getSprintRankedJunkFood())
+                .build();
+    }
+
+    @PATCH
+    @Transactional
+    @Path("sprintRankOfFoodConsumption")
+    public Response getSprintRankOfFoodConsumption(){
+        return Response
+                .ok(this.service.getSprintRankOfFoodConsumption())
+                .build();
+    }
 }
