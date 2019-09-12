@@ -11,6 +11,10 @@ import java.util.List;
 @NamedQuery(name = "Players.findAll",
         query = "SELECT f FROM Player f ORDER BY f.name")
 public class Player extends model.abstracts. Entity {
+<<<<<<< HEAD
+=======
+    @Column(name = "name")
+>>>>>>> dev-fernando
     private String name;
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)

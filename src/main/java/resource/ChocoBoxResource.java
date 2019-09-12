@@ -1,25 +1,22 @@
 package resource;
 
-import model.RequestModel.PlayerRM;
-import service.PlayerService;
-
+import model.RequestModel.ChocoBoxRM;
+import service.ChocoBoxService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-
-@Path("players")
+@Path("choco")
 @ApplicationScoped
 @Produces("application/json")
 @Consumes("application/json")
-public class PlayerResource {
+public class ChocoBoxResource {
     @Inject
-    public PlayerResource(PlayerService service) {
+    public ChocoBoxResource(ChocoBoxService service) {
         this.service = service;
     }
-
-    private PlayerService service;
+    private ChocoBoxService service;
 
     @GET
     public Response get(){
@@ -30,10 +27,18 @@ public class PlayerResource {
 
     @POST
     @Transactional
-    public Response create(PlayerRM playerRM){
+    public Response create(ChocoBoxRM chocoBoxRM){
         return Response
-                .ok(this.service.saveOne(playerRM))
+                .ok(this.service.saveOne(chocoBoxRM))
                 .build();
     }
+
+    @PATCH
+    @Transactional
+    @Path("/{playerId}/")
+    public Response update(@PathParam("playerId") Long playerId){
+        return Response.ok(this.service.updateChoco(playerId)).build();
+    }
+
 
 }

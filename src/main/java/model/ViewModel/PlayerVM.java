@@ -1,7 +1,5 @@
 package model.ViewModel;
 
-import model.Player;
-
 import java.time.LocalDate;
 
 public class PlayerVM {
