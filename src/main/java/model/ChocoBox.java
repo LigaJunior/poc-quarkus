@@ -5,16 +5,18 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.Date;
+
 @Entity
 @Table(name = "choco_box")
 @NamedQuery(name = "ChocoBox.findAll",
         query = "SELECT f FROM ChocoBox f ORDER BY f.name")
 public class ChocoBox extends model.abstracts.Entity {
-    @Column(length = 40, unique = true)
     private String name;
     private int ammount;
     private Long playerId;
     private Boolean paidOut;
+    private LocalDate paidOutDate;
 
     public int getAmmount() {
         return ammount;
@@ -27,12 +29,13 @@ public class ChocoBox extends model.abstracts.Entity {
     public ChocoBox() {
         this.setRegistrationDate(LocalDate.now());
     }
-    public ChocoBox(String name, int ammount, Long playerId, Boolean paidOut) {
+    public ChocoBox(String name, int ammount, Long playerId, Boolean paidOut,LocalDate paidOutDate) {
         this.setRegistrationDate(LocalDate.now());
         this.name = name;
         this.ammount = ammount;
         this.playerId = playerId;
         this.paidOut = paidOut;
+        this.paidOutDate = paidOutDate;
     }
 
     public static ChocoBox findById(long playerId){
@@ -40,6 +43,14 @@ public class ChocoBox extends model.abstracts.Entity {
     }
     public Boolean getPaidOut() {
         return paidOut;
+    }
+
+    public LocalDate getPaidOutDate() {
+        return paidOutDate;
+    }
+
+    public void setPaidOutDate(LocalDate paidOutDate) {
+        this.paidOutDate = paidOutDate;
     }
 
     public void setPaidOut(Boolean paidOut) {

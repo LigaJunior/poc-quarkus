@@ -31,10 +31,10 @@ public class ChocoBoxResource {
                 .build();
     }
 
-    @PUT
+    @PATCH
     @Transactional
     @Path("/{playerId}/")
-    public Response update(@PathParam("playerID") Long playerId){
+    public Response update(@PathParam("playerId") Long playerId){
         return Response.ok(this.service.updateChoco(playerId)).build();
     }
 
