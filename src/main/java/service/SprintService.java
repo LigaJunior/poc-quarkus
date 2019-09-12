@@ -133,13 +133,6 @@ public class SprintService {
         playerRank.setPlayer(player);
         playerRank.setAmount(amount);
 
-//        results.forEach((record) -> {
-//            Long player = ((BigInteger)record[0]).longValue();
-//            Long amount = ((BigDecimal)record[1]).longValue();
-//            playerRank.setPlayer(player);
-//            playerRank.setAmount(amount);
-//        });
-
         return playerRank;
     }
 

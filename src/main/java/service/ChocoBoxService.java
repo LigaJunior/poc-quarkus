@@ -31,7 +31,7 @@ public class ChocoBoxService{
     public ChocoBox saveOne(ChocoBoxRM chocoBoxRM) {
         if (!isValid(chocoBoxRM)) throw new CustomBadRequestException("The given chocobox is not valid.");
         Player name = Player.findById(chocoBoxRM.getPlayerId());
-        ChocoBox choco = new ChocoBox(name.getName(), chocoBoxRM.getAmount(), chocoBoxRM.getPlayerId(), false, null);
+        ChocoBox choco = new ChocoBox(name.getName(), chocoBoxRM.getReason(), chocoBoxRM.getPlayerId(), false, null);
         this.entityManager.persist(choco);
         return choco;
     }
@@ -44,10 +44,7 @@ public class ChocoBoxService{
                 .findFirst()
                 .isPresent();
 
-        boolean amountIsValid = chocoBoxRM.getAmount() >= 0L;
-
-        validationStatus = isPlayerIdPointingToAExistingPlayer &&
-                                amountIsValid;
+        validationStatus = isPlayerIdPointingToAExistingPlayer;
 
         return validationStatus;
     }

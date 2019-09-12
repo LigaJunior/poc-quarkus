@@ -11,26 +11,18 @@ import java.time.LocalDate;
         query = "SELECT f FROM ChocoBox f ORDER BY f.name")
 public class ChocoBox extends model.abstracts.Entity {
     private String name;
-    private int ammount;
+    private String reason;
     private Long playerId;
     private Boolean paidOut;
     private LocalDate paidOutDate;
 
-    public int getAmmount() {
-        return ammount;
-    }
-
-    public void setAmmount(int ammount) {
-        this.ammount = ammount;
-    }
-
     public ChocoBox() {
         this.setRegistrationDate(LocalDate.now());
     }
-    public ChocoBox(String name, int ammount, Long playerId, Boolean paidOut,LocalDate paidOutDate) {
+    public ChocoBox(String name, String ammount, Long playerId, Boolean paidOut, LocalDate paidOutDate) {
         this.setRegistrationDate(LocalDate.now());
         this.name = name;
-        this.ammount = ammount;
+        this.reason = ammount;
         this.playerId = playerId;
         this.paidOut = paidOut;
         this.paidOutDate = paidOutDate;
@@ -41,6 +33,14 @@ public class ChocoBox extends model.abstracts.Entity {
     }
     public Boolean getPaidOut() {
         return paidOut;
+    }
+
+    public String getAmmount() {
+        return reason;
+    }
+
+    public void setAmmount(String ammount) {
+        this.reason = ammount;
     }
 
     public LocalDate getPaidOutDate() {
