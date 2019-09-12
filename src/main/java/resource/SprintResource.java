@@ -16,7 +16,11 @@ import javax.ws.rs.core.Response;
 @Consumes("application/json")
 public class SprintResource {
     @Inject
-    SprintService service;
+    public SprintResource(SprintService service) {
+        this.service = service;
+    }
+
+    private SprintService service;
 
     @GET
     public Response get() {
@@ -83,4 +87,6 @@ public class SprintResource {
                 .ok(this.service.getSprintRankOfFoodConsumption())
                 .build();
     }
+
+
 }

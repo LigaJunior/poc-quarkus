@@ -8,7 +8,7 @@ import java.util.List;
 @NamedQuery(name = "JunkFoods.findAll",
         query = "SELECT f FROM JunkFood f ORDER BY f.name")
 public class JunkFood extends model.abstracts.Entity {
-    @Column(length = 40, unique = true)
+    @Column(length = 40, unique = true, name = "name")
     private String name;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "junkFood")

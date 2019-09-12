@@ -15,7 +15,11 @@ import javax.ws.rs.core.Response;
 @Consumes("application/json")
 public class PlayerResource {
     @Inject
-    PlayerService service;
+    public PlayerResource(PlayerService service) {
+        this.service = service;
+    }
+
+    private PlayerService service;
 
     @GET
     public Response get(){

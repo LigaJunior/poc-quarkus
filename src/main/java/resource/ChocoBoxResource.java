@@ -4,7 +4,6 @@ import model.RequestModel.ChocoBoxRM;
 import service.ChocoBoxService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.PostUpdate;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -14,7 +13,10 @@ import javax.ws.rs.core.Response;
 @Consumes("application/json")
 public class ChocoBoxResource {
     @Inject
-    ChocoBoxService service;
+    public ChocoBoxResource(ChocoBoxService service) {
+        this.service = service;
+    }
+    private ChocoBoxService service;
 
     @GET
     public Response get(){

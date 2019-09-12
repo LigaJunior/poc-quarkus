@@ -1,8 +1,8 @@
 package service;
 
+import error.CustomBadRequestException;
 import model.Player;
 import model.RequestModel.PlayerRM;
-import model.Sprint;
 import model.ViewModel.PlayerVM;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -10,6 +10,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+
+import static model.ViewModel.VMConverter.convertPlayer;
 
 @ApplicationScoped
 public class PlayerService {
@@ -24,17 +26,25 @@ public class PlayerService {
         List<Player> players = this.entityManager.createNamedQuery("Players.findAll", Player.class)
                 .getResultList();
         List<PlayerVM> playersVM = new ArrayList<>();
-        players.forEach(p-> playersVM.add(convertPlayerToViewModel(p)));
+        players.forEach(p-> playersVM.add(convertPlayer(p)));
         return playersVM;
     }
 
     public PlayerVM saveOne(PlayerRM playerRM) {
+        if (!isValid(playerRM)) throw new CustomBadRequestException("The given player is not valid.");
         Player player = new Player(playerRM.getName());
         this.entityManager.persist(player);
-        return convertPlayerToViewModel(player);
+        return convertPlayer(player);
     }
 
-    private PlayerVM convertPlayerToViewModel(Player player){
-        return new PlayerVM(player.getId(),player.getName(),player.getRegistrationDate());
+    private boolean isValid(PlayerRM playerRM) {
+        boolean validationStatus = false;
+
+        //it only validates if the given name is not empty
+        boolean isNameNotEmpty = !playerRM.getName().isEmpty();
+
+        validationStatus = isNameNotEmpty;
+
+        return validationStatus;
     }
 }
