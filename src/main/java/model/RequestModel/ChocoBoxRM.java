@@ -2,15 +2,15 @@ package model.RequestModel;
 
 public class ChocoBoxRM {
 
-    private int amount;
+    private String reason;
     private Long playerId;
 
-    public int getAmount() {
-        return amount;
+    public String getReason() {
+        return reason;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     public Long getPlayerId() {
