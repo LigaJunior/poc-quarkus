@@ -13,11 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "sprint")
 public class Sprint extends model.abstracts.Entity {
-<<<<<<< HEAD
-    @Column(length = 100)
-=======
     @Column(name = "name", length = 100)
->>>>>>> dev-fernando
     private String name;
 
     @Column(name = "active")

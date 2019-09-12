@@ -12,14 +12,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-<<<<<<< HEAD
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-=======
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -28,7 +20,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static model.ViewModel.VMConverter.*;
->>>>>>> dev-fernando
 
 @ApplicationScoped
 public class SprintService {
@@ -61,13 +52,6 @@ public class SprintService {
         return convertSprint(sprint);
     }
 
-<<<<<<< HEAD
-    public List<SprintVM> findActiveSprints() {
-        Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
-        List<Sprint> source = query.getResultList();
-        List<SprintVM> sprints = new ArrayList<>();
-        source.forEach(s->sprints.add(convertSprintToViewModel(s)));
-=======
     private boolean isSprintValid(SprintRM sprintRM) {
         boolean validationStatus = false;
         // it only validates if already exists a sprint with the same number in database
@@ -95,7 +79,6 @@ public class SprintService {
         sprints.forEach(s->{
             if (localDate.isAfter(s.getEndDate())) s.setEndDate(localDate);
         });
->>>>>>> dev-fernando
         return sprints;
     }
 
@@ -197,21 +180,6 @@ public class SprintService {
         return rankFoodOfSprint;
     }
 
-<<<<<<< HEAD
-    public List<SprintVM> changeSprintDeadLine(String endDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(endDate, formatter);
-        Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
-        List<Sprint> source = query.getResultList();
-        List<SprintVM> sprints = new ArrayList<>();
-        source.forEach(s->sprints.add(convertSprintToViewModel(s)));
-        sprints.forEach(s->s.setEndDate(localDate));
-
-        return sprints;
-    }
-}
-=======
 }
 
 
->>>>>>> dev-fernando

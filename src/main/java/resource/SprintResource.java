@@ -9,10 +9,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-<<<<<<< HEAD
-import java.util.List;
-=======
->>>>>>> dev-fernando
 
 @Path("sprints")
 @ApplicationScoped
@@ -65,14 +61,6 @@ public class SprintResource {
                 .build();
     }
 
-<<<<<<< HEAD
-    @Path("/{endDate}")
-    @Transactional
-    @GET
-    public Response findActiveSprints(@PathParam("endDate")String endDate){
-        return Response.ok( this.service.changeSprintDeadLine(endDate)).status(200).build();
-    }
-=======
     @PATCH
     @Transactional
     @Path("all-player-rank")
@@ -101,6 +89,4 @@ public class SprintResource {
     }
 
 
->>>>>>> dev-fernando
 }
-
