@@ -46,7 +46,7 @@ public class SprintResource {
     }
 
     @Path("extend")
-    @PUT
+    @PATCH
     @Transactional
     public Response findActiveSprints(ExtendSprintVM endDate){
         return Response.ok( this.service.extendActiveSprintDeadLine(endDate)).status(200).build();
@@ -63,7 +63,7 @@ public class SprintResource {
 
     @GET
     @Transactional
-    @Path("all-player-rank")
+    @Path("player-rank")
     public Response getPlayerRankOfAllSprints(){
         return Response
                 .ok(this.service.getPlayerRankOfAllSprints())
@@ -72,16 +72,16 @@ public class SprintResource {
 
     @GET
     @Transactional
-    @Path("sprint-ranked-food")
+    @Path("most-junk")
     public Response getSprintRankedJunkFood(){
         return Response
-                .ok(this.service.getSprintRankedJunkFood())
+                .ok(this.service.getMostJunkSprint())
                 .build();
     }
 
     @GET
     @Transactional
-    @Path("sprint-rank-of-food-consumption")
+    @Path("food-consumption")
     public Response getSprintRankOfFoodConsumption(){
         return Response
                 .ok(this.service.getSprintRankOfFoodConsumption())

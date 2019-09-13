@@ -1,10 +1,43 @@
 package model;
 
+import model.ViewModel.MostJunkSprintVM;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "consumption_history")
+@SqlResultSetMapping(
+        name="getMostJunkMapping",
+        classes={
+                @ConstructorResult(
+                        targetClass= MostJunkSprintVM.class,
+                        columns={
+                                @ColumnResult(name="name", type = String.class),
+                                @ColumnResult(name="amount", type = Long.class),
+                                @ColumnResult(name="sprintnumber", type = Long.class)
+                        }
+                )
+        }
+)
+@NamedNativeQuery(name="getMostJunk",
+        query="SELECT * FROM" +
+                "(" +
+                "SELECT sprint.name, SUM(amount) as amount,sprint.sprint_number as sprintNumber " +
+                "FROM consumption_history " +
+                "INNER JOIN sprint ON sprint.id = sprint_id " +
+                "GROUP BY sprint.name, sprint.sprint_number " +
+                ") AS ranking where amount =  " +
+                "( " +
+                "SELECT MAX(amount) FROM  " +
+                "( " +
+                "SELECT sprint.name, SUM(amount) as amount,sprint.sprint_number as sprintNumber " +
+                "FROM consumption_history " +
+                "INNER JOIN sprint ON sprint.id = sprint_id " +
+                "GROUP BY sprint.name, sprint.sprint_number " +
+                ") AS max_consumed " +
+                ")",
+        resultSetMapping="getMostJunkMapping")
 public class ConsumptionHistory extends model.abstracts.Entity {
     @ManyToOne
     @JoinColumn(name = "junkfood_id")
