@@ -7,11 +7,14 @@ import model.ConsumptionHistory;
 import model.Player;
 import model.RequestModel.SprintRM;
 import model.Sprint;
+import org.hibernate.boot.jaxb.hbm.internal.ImplicitResultSetMappingDefinition;
+import org.hibernate.boot.model.source.internal.hbm.ResultSetMappingBinder;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -122,6 +125,12 @@ public class SprintService {
         return ranking;
     }
 
+    public List<MostJunkSprintVM> getMostJunkSprint() {
+        TypedQuery<MostJunkSprintVM> getMostJunk = this.entityManager
+                .createNamedQuery("getMostJunk", MostJunkSprintVM.class);
+        return getMostJunk.getResultList();
+    }
+
     public List<AllPlayerRankedVM> getPlayerRankOfAllSprints(){
         List<AllPlayerRankedVM> playerRank = new ArrayList<>();
 
@@ -139,32 +148,12 @@ public class SprintService {
         return playerRank;
     }
 
-    public SprintRankedJunkFoodVM getSprintRankedJunkFood() {
-        SprintRankedJunkFoodVM sprintFoodRank = new SprintRankedJunkFoodVM();
-        Query query = this.entityManager.createNativeQuery("SELECT sprint.name, sprint.sprintnumber as sprintnumber, SUM(amount) as amount " +
-                "FROM consumption_history " +
-                "INNER JOIN sprint ON sprint.id = sprint_id " +
-                "GROUP BY sprint.name, sprint.sprintnumber ORDER BY  sum(amount) DESC limit 1");
-        Object[] results = (Object[]) query.getSingleResult();
-
-        String name = (String) results[0];
-        Long sprintNumber = ((BigInteger) results[1]).longValue();
-        Long amount = ((BigDecimal) results[2]).longValue();
-
-        sprintFoodRank.setName(name);
-        sprintFoodRank.setAmount(amount);
-        sprintFoodRank.setSprintNumber(sprintNumber);
-
-        return sprintFoodRank;
-    }
-
     public List<SprintRankOfFoodConsumptionVM> getSprintRankOfFoodConsumption (){
         String sql = "SELECT sprint.name as sprint, " +
                 "junk_food.name as food, SUM(amount) as amount " +
                 "FROM ((consumption_history " +
                 "INNER JOIN sprint ON sprint.id = sprint_id) " +
                 "INNER JOIN junk_food ON junk_food.id = junkfood_id) " +
-                "WHERE sprint_id = 1 " +
                 "GROUP BY sprint.name, junk_food.name ORDER BY sum(amount) DESC";
             ArrayList<SprintRankOfFoodConsumptionVM> rankFoodOfSprint = new ArrayList<SprintRankOfFoodConsumptionVM>();
             Query query = this.entityManager.createNativeQuery(sql);
