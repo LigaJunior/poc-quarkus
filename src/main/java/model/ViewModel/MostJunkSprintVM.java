@@ -1,17 +1,20 @@
 package model.ViewModel;
 
-public class SprintRankedJunkFoodVM {
+import javax.persistence.Table;
+
+@Table
+public class MostJunkSprintVM {
     private String name;
     private Long amount;
     private Long sprintNumber;
 
-    public SprintRankedJunkFoodVM() {
+    public MostJunkSprintVM() {
     }
 
-    public SprintRankedJunkFoodVM(String name, Long amount, Long sprintNumber) {
+    public MostJunkSprintVM(String name, Long amount, Long sprintnumber) {
         this.name = name;
         this.amount = amount;
-        this.sprintNumber = sprintNumber;
+        this.sprintNumber = sprintnumber;
     }
 
     public String getName() {
