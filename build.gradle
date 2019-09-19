@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'io.quarkus' version '0.21.1'
+    id 'io.quarkus' version '0.22.0'
 }
 
 version '1.0-SNAPSHOT'
@@ -17,8 +17,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-jsonb'
     implementation 'io.quarkus:quarkus-jdbc-postgresql'
     implementation 'io.quarkus:quarkus-hibernate-orm-panache'
-    implementation enforcedPlatform('io.quarkus:quarkus-bom:0.21.1')
+    implementation enforcedPlatform('io.quarkus:quarkus-bom:0.22.0')
     implementation 'io.quarkus:quarkus-resteasy'
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'io.quarkus', name: 'quarkus-junit5', version: '0.21.1'
+    testCompile group: 'io.quarkus', name: 'quarkus-junit5', version: '0.22.0'
 }
