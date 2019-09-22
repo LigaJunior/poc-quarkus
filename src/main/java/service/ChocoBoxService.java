@@ -60,4 +60,11 @@ public class ChocoBoxService{
     return chocob.get(0);
     }
 
+    public ChocoBox[] payOne(Long chocoId) {
+        Query query = this.entityManager.createNativeQuery("SELECT * FROM choco_box where id="+chocoId, ChocoBox.class);
+        ChocoBox chocoPaid = (ChocoBox) query.getResultList().get(0);
+        chocoPaid.setPaidOut(true);
+        chocoPaid.setPaidOutDate(LocalDate.now());
+        return findAll();
+    }
 }

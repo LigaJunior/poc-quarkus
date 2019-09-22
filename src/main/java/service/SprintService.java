@@ -115,8 +115,10 @@ public class SprintService {
                                 .filter(h -> h.getSprint().getId().equals(activeSprint.getId()))
                                 .findFirst();
                         if (!opCurrentHistory.isPresent()) obj.setAmount(0L);
-                        ConsumptionHistory currentHistory = opCurrentHistory.get();
-                        obj.setAmount(currentHistory.getAmount());
+                        else{
+                            ConsumptionHistory currentHistory = opCurrentHistory.get();
+                            obj.setAmount(currentHistory.getAmount());
+                        }
                         return obj;
                     })
                     .sorted(((o1, o2) -> Long.compare(o2.getAmount(), o1.getAmount())))
