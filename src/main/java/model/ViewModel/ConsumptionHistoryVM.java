@@ -5,14 +5,14 @@ public class ConsumptionHistoryVM {
 
     private long sprintNumber;
 
-    private String playerName;
+    private PlayerVM player;
 
     private long amount;
 
-    public ConsumptionHistoryVM(String junkFoodName, long sprintNumber, String playerName, long amount) {
+    public ConsumptionHistoryVM(String junkFoodName, long sprintNumber, PlayerVM player, long amount) {
         this.junkFoodName = junkFoodName;
         this.sprintNumber = sprintNumber;
-        this.playerName = playerName;
+        this.player = player;
         this.amount = amount;
     }
 
@@ -32,12 +32,12 @@ public class ConsumptionHistoryVM {
         this.sprintNumber = sprintNumber;
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public PlayerVM getPlayer() {
+        return player;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public void setPlayer(PlayerVM player) {
+        this.player = player;
     }
 
     public long getAmount() {

@@ -14,6 +14,8 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static model.ViewModel.VMConverter.convertPlayer;
+
 @ApplicationScoped
 public class ConsumptionHistoryService {
     @Inject
@@ -28,7 +30,7 @@ public class ConsumptionHistoryService {
                 .getResultList();
         List<ConsumptionHistoryVM> consumptionHistoryVMList = new ArrayList<>();
         source.stream().forEach(c-> consumptionHistoryVMList.add(
-                new ConsumptionHistoryVM(c.getJunkFood().getName(),c.getSprint().getSprintNumber(),c.getPlayer().getName(),
+                new ConsumptionHistoryVM(c.getJunkFood().getName(),c.getSprint().getSprintNumber(),convertPlayer(c.getPlayer()),
                         c.getAmount())
         ));
         return consumptionHistoryVMList;
@@ -43,7 +45,7 @@ public class ConsumptionHistoryService {
         this.entityManager.persist(consumption);
         return new ConsumptionHistoryVM(consumption.getJunkFood().getName(),
                 consumption.getSprint().getSprintNumber(),
-                consumption.getPlayer().getName(),
+                convertPlayer(consumption.getPlayer()),
                 consumption.getAmount());
     }
 
