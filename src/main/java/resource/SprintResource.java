@@ -27,6 +27,12 @@ public class SprintResource {
         return Response.ok(this.service.findAll()).status(200).build();
     }
 
+    @GET
+    @Path("{sprintID}")
+    public Response getById(@PathParam("sprintID") Long sprintId) {
+        return Response.ok(this.service.findById(sprintId)).status(200).build();
+    }
+
     @POST
     @Transactional
     public Response create(SprintRM sprintRM) {

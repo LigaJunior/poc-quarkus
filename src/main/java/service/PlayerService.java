@@ -51,7 +51,7 @@ public class PlayerService {
 
     public List<PlayerVM> findUnallocated() {
         List<PlayerVM> resultList = new ArrayList<>();
-        List<Player> sourceList = this.entityManager.createNativeQuery("SELECT * FROM player WHERE player.id NOT IN (SELECT player_id FROM sprint_player)", Player.class).getResultList();
+        List<Player> sourceList = this.entityManager.createNativeQuery("SELECT * FROM player WHERE player.id NOT IN (SELECT player_id FROM sprint_player, sprint WHERE sprint_player.sprint_id = sprint.id AND sprint.active=true)", Player.class).getResultList();
         resultList = convertPlayers(sourceList);
         return resultList;
     }
