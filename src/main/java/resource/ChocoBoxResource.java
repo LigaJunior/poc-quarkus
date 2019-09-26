@@ -40,5 +40,10 @@ public class ChocoBoxResource {
         return Response.ok(this.service.updateChoco(playerId)).build();
     }
 
-
+    @PATCH
+    @Transactional
+    @Path("/pay/{chocoId}")
+    public Response payOne(@PathParam("chocoId") Long chocoId){
+        return Response.ok(this.service.payOne(chocoId)).build();
+    }
 }

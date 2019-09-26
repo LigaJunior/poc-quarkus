@@ -13,6 +13,8 @@ public class SprintVM {
     private List<PlayerVM> players;
     private LocalDate registrationDate;
 
+    public SprintVM() {}
+
     public SprintVM(Long id, String name, Boolean active, LocalDate startDate, LocalDate endDate, Long sprintNumber, LocalDate registrationDate) {
         this.id = id;
         this.name = name;

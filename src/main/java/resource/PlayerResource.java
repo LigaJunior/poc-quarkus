@@ -28,6 +28,14 @@ public class PlayerResource {
                 .build();
     }
 
+    @GET
+    @Path("/unallocated")
+    public Response getUnallocated(){
+        return Response
+                .ok(this.service.findUnallocated())
+                .build();
+    }
+
     @POST
     @Transactional
     public Response create(PlayerRM playerRM){

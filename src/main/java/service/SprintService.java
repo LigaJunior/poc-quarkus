@@ -111,12 +111,10 @@ public class SprintService {
                     .map(player -> {
                         SprintPlayerRankedVM obj = new SprintPlayerRankedVM();
                         obj.setPlayer(convertPlayer(player));
-                        Optional<ConsumptionHistory> opCurrentHistory = player.getHistory().stream()
+                        long amount = player.getHistory().stream()
                                 .filter(h -> h.getSprint().getId().equals(activeSprint.getId()))
-                                .findFirst();
-                        if (!opCurrentHistory.isPresent()) obj.setAmount(0L);
-                        ConsumptionHistory currentHistory = opCurrentHistory.get();
-                        obj.setAmount(currentHistory.getAmount());
+                                .mapToLong(ConsumptionHistory::getAmount).sum();
+                            obj.setAmount(amount);
                         return obj;
                     })
                     .sorted(((o1, o2) -> Long.compare(o2.getAmount(), o1.getAmount())))
@@ -169,6 +167,11 @@ public class SprintService {
         return rankFoodOfSprint;
     }
 
+    public List<SprintVM> findById(Long id) {
+        Query query = this.entityManager.createNativeQuery("select * from sprint where id ="+id, Sprint.class);
+        List<Sprint> source = query.getResultList();
+        return convertSprints(source);
+    }
 }
 
 

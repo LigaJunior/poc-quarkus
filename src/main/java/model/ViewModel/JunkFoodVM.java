@@ -5,12 +5,12 @@ import java.time.LocalDate;
 public class JunkFoodVM {
     private long id;
     private String name;
-    private LocalDate dataCadastro;
+    private LocalDate registrationDate;
 
-    public JunkFoodVM(long id, String name, LocalDate dataCadastro) {
+    public JunkFoodVM(long id, String name, LocalDate registrationDate) {
         this.id = id;
         this.name = name;
-        this.dataCadastro = dataCadastro;
+        this.registrationDate = registrationDate;
     }
 
     public long getId() {
@@ -29,11 +29,11 @@ public class JunkFoodVM {
         this.name = name;
     }
 
-    public LocalDate getDataCadastro() {
-        return dataCadastro;
+    public LocalDate getRegistrationDate() {
+        return registrationDate;
     }
 
-    public void setDataCadastro(LocalDate dataCadastro) {
-        this.dataCadastro = dataCadastro;
+    public void setRegistrationDate(LocalDate registrationDate) {
+        this.registrationDate = registrationDate;
     }
 }
