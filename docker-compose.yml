@@ -9,6 +9,22 @@ services:
       POSTGRES_DB: "pocquarkus"
     networks:
       - poc-quarkus-network
+  sample:
+    container_name: sample
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    ports:
+      - '3001:3000'
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - poc-quarkus-network
   quarkus-api:
     restart: on-failure
     build:
