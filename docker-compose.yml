@@ -1,39 +1,26 @@
 version: '3'
-services:
-  postgres:
-    container_name: quarkus-postgresdb
-    image: postgres:alpine
-    environment:
-      POSTGRES_USER: "user"
-      POSTGRES_PASSWORD: "admin"
-      POSTGRES_DB: "pocquarkus"
-    networks:
-      - poc-quarkus-network
+services:  
   sample:
-    container_name: sample
+    container_name: react
     restart: on-failure
     build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - '.:/app'
-      - '/app/node_modules'
+      context: react
+      dockerfile: Dockerfile    
     ports:
-      - '3001:3000'
+      - '3000:3000'
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
     networks:
       - poc-quarkus-network
+    image: pocquarkus/react
   quarkus-api:
     restart: on-failure
     build:
       dockerfile: Dockerfile.jvm
-      context: .
+      context: poc-quarkus
     image: pocquarkus/api-jvm
     container_name: quarkus-api
-    depends_on:
-      - postgres
     ports:
       - "8080:8080"
     networks:
@@ -41,3 +28,5 @@ services:
 networks:
   poc-quarkus-network:
     driver: bridge
+  
+      
