@@ -62,7 +62,7 @@ public class ConsumptionHistoryService {
                 .findFirst()
                 .isPresent();
 
-        boolean isPlayerIdPointingToAExistingPlayer = this.entityManager.createNativeQuery("select * from player where id =" + consumptionHistoryRM.getPlayerId() + ";", Player.class)
+        boolean isPlayerIdPointingToAExistingPlayer = this.entityManager.createNativeQuery("select * from player where player.active = true and id =" + consumptionHistoryRM.getPlayerId() + ";", Player.class)
                 .getResultStream()
                 .findFirst()
                 .isPresent();

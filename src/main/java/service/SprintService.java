@@ -129,30 +129,14 @@ public class SprintService {
         return getMostJunk.getResultList();
     }
 
-    public List<AllPlayerRankedVM> getPlayerRankOfAllSprints(){
-        List<AllPlayerRankedVM> playerRank = new ArrayList<>();
-
-        Query query =  this.entityManager.createNativeQuery("SELECT f.player_id, SUM(f.amount) as amount " +
-                "FROM consumption_history f GROUP BY player_id ORDER BY  sum(f.amount) DESC");
-        List<Object[]> results =  query.getResultList();
-        results.forEach((record) -> {
-            Long player = ((BigInteger)record[0]).longValue();
-            Long amount = ((BigDecimal)record[1]).longValue();
-
-            playerRank.add(new AllPlayerRankedVM(amount, player));
-        });
-
-
-        return playerRank;
-    }
-
-    public List<SprintRankOfFoodConsumptionVM> getSprintRankOfFoodConsumption (){
-        String sql = "SELECT sprint.name as sprint, " +
-                "junk_food.name as food, SUM(amount) as amount " +
-                "FROM ((consumption_history " +
-                "INNER JOIN sprint ON sprint.id = sprint_id) " +
-                "INNER JOIN junk_food ON junk_food.id = junkfood_id) " +
-                "GROUP BY sprint.name, junk_food.name ORDER BY sum(amount) DESC";
+    public List<SprintRankOfFoodConsumptionVM> getSprintRank(){
+        String sql =
+                "SELECT sprint.name as sprint, SUM(amount) as amount" +
+                "FROM ((consumption_history" +
+                "INNER JOIN sprint ON sprint.id = sprint_id)" +
+                "INNER JOIN junk_food ON junk_food.id = junkfood_id)" +
+                "GROUP BY sprint.name" +
+                "ORDER BY sum(amount) DESC";
             ArrayList<SprintRankOfFoodConsumptionVM> rankFoodOfSprint = new ArrayList<SprintRankOfFoodConsumptionVM>();
             Query query = this.entityManager.createNativeQuery(sql);
             List<Object[]> results =  query.getResultList();

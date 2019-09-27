@@ -39,7 +39,7 @@ public class ChocoBoxService{
     private boolean isValid(ChocoBoxRM chocoBoxRM) {
         boolean validationStatus = false;
 
-        boolean isPlayerIdPointingToAExistingPlayer = this.entityManager.createNativeQuery("select * from player where id =" + chocoBoxRM.getPlayerId() + ";", Player.class)
+        boolean isPlayerIdPointingToAExistingPlayer = this.entityManager.createNativeQuery("select * from player where player.active = true and id =" + chocoBoxRM.getPlayerId() + ";", Player.class)
                 .getResultStream()
                 .findFirst()
                 .isPresent();
@@ -60,11 +60,11 @@ public class ChocoBoxService{
     return chocob.get(0);
     }
 
-    public ChocoBox[] payOne(Long chocoId) {
+    public void payOne(Long chocoId) {
         Query query = this.entityManager.createNativeQuery("SELECT * FROM choco_box where id="+chocoId, ChocoBox.class);
         ChocoBox chocoPaid = (ChocoBox) query.getResultList().get(0);
         chocoPaid.setPaidOut(true);
         chocoPaid.setPaidOutDate(LocalDate.now());
-        return findAll();
+        this.entityManager.merge(chocoPaid);
     }
 }
