@@ -44,7 +44,7 @@ public class PlayerResource {
                 .build();
     }
 
-    @DELETE
+    @PATCH
     @Transactional
     @Path("/{playerId}")
     public Response delete(@PathParam("playerId") Long playerId){
