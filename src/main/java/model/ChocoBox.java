@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "choco_box")
 @NamedQuery(name = "ChocoBox.findAll",
-        query = "SELECT f FROM ChocoBox f ORDER BY f.name")
+        query = "SELECT f FROM ChocoBox f ORDER BY f.paidOut")
 public class ChocoBox extends model.abstracts.Entity {
     private String name;
     private String reason;

@@ -44,4 +44,19 @@ public class PlayerResource {
                 .build();
     }
 
+    @DELETE
+    @Transactional
+    @Path("/{playerId}")
+    public Response delete(@PathParam("playerId") Long playerId){
+        return Response.ok(this.service.DeleteOne(playerId))
+                .build();
+    }
+
+    @GET
+    @Path("rank")
+    public Response getPlayerRank(){
+        return Response
+                .ok(this.service.getPlayerRank())
+                .build();
+    }
 }

@@ -9,8 +9,11 @@ import java.util.List;
 @Entity
 @Table(name = "player")
 @NamedQuery(name = "Players.findAll",
-        query = "SELECT f FROM Player f ORDER BY f.name")
+        query = "SELECT f FROM Player f WHERE f.active = true ORDER BY f.name")
 public class Player extends model.abstracts. Entity {
+    @Column(name = "active")
+    private boolean active;
+
     @Column(name = "name")
     private String name;
 
@@ -27,11 +30,13 @@ public class Player extends model.abstracts. Entity {
 
     public Player() {
         this.setRegistrationDate(LocalDate.now());
+        this.active = true;
     }
 
     public Player(String name) {
         this.name = name;
         this.setRegistrationDate(LocalDate.now());
+        this.active = true;
     }
 
     public String getName() {
@@ -53,5 +58,13 @@ public class Player extends model.abstracts. Entity {
 
     public List<ConsumptionHistory> getHistory() {
         return history;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
