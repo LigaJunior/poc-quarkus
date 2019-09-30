@@ -2,15 +2,13 @@ package model.ViewModel;
 
 public class SprintRankOfFoodConsumptionVM {
     private String sprintName;
-    private String food;
     private Long amount;
 
     public SprintRankOfFoodConsumptionVM() {
     }
 
-    public SprintRankOfFoodConsumptionVM(String sprintName, String food, Long amount) {
+    public SprintRankOfFoodConsumptionVM(String sprintName, Long amount) {
         this.sprintName = sprintName;
-        this.food = food;
         this.amount = amount;
     }
 
@@ -20,14 +18,6 @@ public class SprintRankOfFoodConsumptionVM {
 
     public void setSprintName(String sprintName) {
         this.sprintName = sprintName;
-    }
-
-    public String getFood() {
-        return food;
-    }
-
-    public void setFood(String food) {
-        this.food = food;
     }
 
     public Long getAmount() {
