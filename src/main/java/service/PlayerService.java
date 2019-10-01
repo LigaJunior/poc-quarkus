@@ -1,15 +1,22 @@
 package service;
 
 import error.CustomBadRequestException;
+import error.CustomNotFoundException;
 import model.Player;
 import model.RequestModel.PlayerRM;
+import model.ViewModel.PlayerRankVM;
 import model.ViewModel.PlayerVM;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static model.ViewModel.VMConverter.convertPlayer;
 import static model.ViewModel.VMConverter.convertPlayers;
@@ -51,8 +58,44 @@ public class PlayerService {
 
     public List<PlayerVM> findUnallocated() {
         List<PlayerVM> resultList = new ArrayList<>();
-        List<Player> sourceList = this.entityManager.createNativeQuery("SELECT * FROM player WHERE player.id NOT IN (SELECT player_id FROM sprint_player, sprint WHERE sprint_player.sprint_id = sprint.id AND sprint.active=true)", Player.class).getResultList();
+        List<Player> sourceList = this.entityManager.createNativeQuery("SELECT * FROM player WHERE player.active = true and player.id NOT IN (SELECT player_id FROM sprint_player, sprint WHERE sprint_player.sprint_id = sprint.id AND sprint.active=true)", Player.class).getResultList();
         resultList = convertPlayers(sourceList);
         return resultList;
     }
+
+    public List<PlayerVM> DeleteOne(Long playerId) {
+        Query query = this.entityManager.createNativeQuery("SELECT * FROM player WHERE player.id="+ playerId,Player.class);
+        Player targetPlayer = Optional.ofNullable((Player)query.getResultList().get(0))
+                                        .orElseThrow(() -> new CustomNotFoundException("Player not found"));
+        targetPlayer.setActive(false);
+        this.entityManager.merge(targetPlayer);
+
+        return findAll();
+    }
+
+    public List<PlayerRankVM> getPlayerRank(){
+        List<PlayerRankVM> playerRank = new ArrayList<>();
+
+        Query query =  this.entityManager.createNativeQuery(
+                "SELECT player.*, SUM(c.amount) as amount " +
+                "FROM consumption_history as c, player " +
+                "WHERE c.player_id = player.id " +
+                "GROUP BY player.id ORDER BY sum(c.amount) DESC"
+        );
+        List<Object[]> results =  query.getResultList();
+        results.forEach((record) -> {
+            PlayerVM player = new PlayerVM(
+                    ((BigInteger)record[0]).longValue(),
+                    String.valueOf(record[2]),
+                    LocalDate.parse(String.valueOf(record[1]))
+            );
+            Long amount = ((BigDecimal)record[4]).longValue();
+
+            playerRank.add(new PlayerRankVM(amount, player));
+        });
+
+
+        return playerRank;
+    }
 }
+

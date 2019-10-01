@@ -44,6 +44,7 @@ public class ChocoBoxResource {
     @Transactional
     @Path("/pay/{chocoId}")
     public Response payOne(@PathParam("chocoId") Long chocoId){
-        return Response.ok(this.service.payOne(chocoId)).build();
+        this.service.payOne(chocoId);
+        return Response.ok().build();
     }
 }

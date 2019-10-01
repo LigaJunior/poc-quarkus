@@ -76,13 +76,10 @@ public class SprintService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(endDate.getNewDeadLine(), formatter);
         Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
-        List<Sprint> source = query.getResultList();
-        if (source.size() <= 0) throw  new CustomNotFoundException("No active sprint found");
-        List<SprintVM> sprints = convertSprints(source);
-        sprints.forEach(s->{
-            if (localDate.isAfter(s.getEndDate())) s.setEndDate(localDate);
-        });
-        return sprints;
+        Sprint savedSprint = Optional.ofNullable((Sprint) query.getResultList().get(0))
+                .orElseThrow(() -> new CustomNotFoundException("No active sprint found"));
+            if (localDate.isAfter(savedSprint.getEndDate())) savedSprint.setEndDate(localDate);
+        return convertSprints(query.getResultList());
     }
 
     public PlayerVM addToSprint(Long playerId, Long sprintId){
@@ -129,39 +126,21 @@ public class SprintService {
         return getMostJunk.getResultList();
     }
 
-    public List<AllPlayerRankedVM> getPlayerRankOfAllSprints(){
-        List<AllPlayerRankedVM> playerRank = new ArrayList<>();
-
-        Query query =  this.entityManager.createNativeQuery("SELECT f.player_id, SUM(f.amount) as amount " +
-                "FROM consumption_history f GROUP BY player_id ORDER BY  sum(f.amount) DESC");
-        List<Object[]> results =  query.getResultList();
-        results.forEach((record) -> {
-            Long player = ((BigInteger)record[0]).longValue();
-            Long amount = ((BigDecimal)record[1]).longValue();
-
-            playerRank.add(new AllPlayerRankedVM(amount, player));
-        });
-
-
-        return playerRank;
-    }
-
-    public List<SprintRankOfFoodConsumptionVM> getSprintRankOfFoodConsumption (){
-        String sql = "SELECT sprint.name as sprint, " +
-                "junk_food.name as food, SUM(amount) as amount " +
-                "FROM ((consumption_history " +
-                "INNER JOIN sprint ON sprint.id = sprint_id) " +
-                "INNER JOIN junk_food ON junk_food.id = junkfood_id) " +
-                "GROUP BY sprint.name, junk_food.name ORDER BY sum(amount) DESC";
+    public List<SprintRankOfFoodConsumptionVM> getSprintRank(){
+        String sql ="SELECT sprint.name as sprint, SUM(amount) as amount\n" +
+                "                FROM ((consumption_history\n" +
+                "                INNER JOIN sprint ON sprint.id = sprint_id)\n" +
+                "                INNER JOIN junk_food ON junk_food.id = junkfood_id)\n" +
+                "                GROUP BY sprint.name\n" +
+                "                ORDER BY sum(amount) DESC";
             ArrayList<SprintRankOfFoodConsumptionVM> rankFoodOfSprint = new ArrayList<SprintRankOfFoodConsumptionVM>();
             Query query = this.entityManager.createNativeQuery(sql);
             List<Object[]> results =  query.getResultList();
 
             results.forEach((record) -> {
-                String sprintName = (String)record[0];
-                String food = (String)record[1];
-                Long amount = ((BigDecimal)record[2]).longValue();
-                rankFoodOfSprint.add(new SprintRankOfFoodConsumptionVM(sprintName, food, amount));
+                String sprintName = String.valueOf(record[0]);
+                Long amount =((BigDecimal)record[1]).longValue();
+                rankFoodOfSprint.add(new SprintRankOfFoodConsumptionVM(sprintName, amount));
 
         });
         return rankFoodOfSprint;
