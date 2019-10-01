@@ -54,7 +54,7 @@ public class SprintResource {
     @Path("extend")
     @PATCH
     @Transactional
-    public Response findActiveSprints(ExtendSprintVM endDate){
+    public Response extendActiveSprintDeadLine(ExtendSprintVM endDate){
         return Response.ok( this.service.extendActiveSprintDeadLine(endDate)).status(200).build();
     }
 

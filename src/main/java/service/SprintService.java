@@ -76,13 +76,10 @@ public class SprintService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(endDate.getNewDeadLine(), formatter);
         Query query = this.entityManager.createNativeQuery("select * from sprint where active = true", Sprint.class);
-        List<Sprint> source = query.getResultList();
-        if (source.size() <= 0) throw  new CustomNotFoundException("No active sprint found");
-        List<SprintVM> sprints = convertSprints(source);
-        sprints.forEach(s->{
-            if (localDate.isAfter(s.getEndDate())) s.setEndDate(localDate);
-        });
-        return sprints;
+        Sprint savedSprint = Optional.ofNullable((Sprint) query.getResultList().get(0))
+                .orElseThrow(() -> new CustomNotFoundException("No active sprint found"));
+            if (localDate.isAfter(savedSprint.getEndDate())) savedSprint.setEndDate(localDate);
+        return convertSprints(query.getResultList());
     }
 
     public PlayerVM addToSprint(Long playerId, Long sprintId){
