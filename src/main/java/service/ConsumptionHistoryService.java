@@ -67,12 +67,12 @@ public class ConsumptionHistoryService {
                 .findFirst()
                 .isPresent();
 
-        boolean amountIsValid = consumptionHistoryRM.getAmount() > 0L;
+        boolean isAmountValid = consumptionHistoryRM.getAmount() > 0L;
 
         validationStatus = isJunkFoodIdPointingToAExistingJunkFood &&
                                 isSprintIdPointingToAExistingSprint &&
                                 isPlayerIdPointingToAExistingPlayer &&
-                                amountIsValid;
+                                isAmountValid;
 
         return validationStatus;
     }

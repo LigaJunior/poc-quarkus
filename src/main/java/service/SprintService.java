@@ -103,7 +103,7 @@ public class SprintService {
         Optional<Sprint> opActiveSprint = Optional.ofNullable(activeSprintQuery.get(0));
         if (opActiveSprint.isPresent()){
             Sprint activeSprint = opActiveSprint.get();
-            List<Player> players = activeSprint.getPlayers();
+            List<Player> players = activeSprint.getPlayers().stream().filter(p->p.isActive()).collect(Collectors.toList());
             ranking = players.stream()
                     .map(player -> {
                         SprintPlayerRankedVM obj = new SprintPlayerRankedVM();
@@ -127,23 +127,29 @@ public class SprintService {
     }
 
     public List<SprintRankOfFoodConsumptionVM> getSprintRank(){
-        String sql ="SELECT sprint.name as sprint, SUM(amount) as amount\n" +
-                "                FROM ((consumption_history\n" +
-                "                INNER JOIN sprint ON sprint.id = sprint_id)\n" +
-                "                INNER JOIN junk_food ON junk_food.id = junkfood_id)\n" +
-                "                GROUP BY sprint.name\n" +
-                "                ORDER BY sum(amount) DESC";
-            ArrayList<SprintRankOfFoodConsumptionVM> rankFoodOfSprint = new ArrayList<SprintRankOfFoodConsumptionVM>();
+            String sql ="SELECT sprint.*, SUM(c.amount) as amount " +
+                        "FROM consumption_history as c, sprint " +
+                        "WHERE c.sprint_id = sprint.id " +
+                        "GROUP BY sprint.id ORDER BY sum(c.amount) DESC";
+            ArrayList<SprintRankOfFoodConsumptionVM> foodConsumptionRanking = new ArrayList<SprintRankOfFoodConsumptionVM>();
             Query query = this.entityManager.createNativeQuery(sql);
             List<Object[]> results =  query.getResultList();
 
             results.forEach((record) -> {
-                String sprintName = String.valueOf(record[0]);
-                Long amount =((BigDecimal)record[1]).longValue();
-                rankFoodOfSprint.add(new SprintRankOfFoodConsumptionVM(sprintName, amount));
+                SprintVM sprint = new SprintVM(
+                                    ((BigInteger)record[0]).longValue(),
+                                    String.valueOf(record[4]),
+                                    (Boolean) record[2],
+                                    LocalDate.parse(String.valueOf(record[6])),
+                                    LocalDate.parse(String.valueOf(record[3])),
+                                    ((BigInteger)record[5]).longValue(),
+                                    LocalDate.parse(String.valueOf(record[1]))
+                    );
+                Long amount =((BigDecimal)record[7]).longValue();
+                foodConsumptionRanking.add(new SprintRankOfFoodConsumptionVM(sprint, amount));
 
         });
-        return rankFoodOfSprint;
+        return foodConsumptionRanking;
     }
 
     public List<SprintVM> findById(Long id) {
