@@ -19,4 +19,4 @@ ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jb
 ENV AB_ENABLED=jmx_exporter
 COPY /build/lib/* /deployments/lib/
 COPY /build/poc-quarkus-1.0-SNAPSHOT-runner.jar /deployments/app.jar
-ENTRYPOINT [ "/deployments/run-java.sh" ]
+CMD ["chmod +x","./deployments/run-java.sh" ]
