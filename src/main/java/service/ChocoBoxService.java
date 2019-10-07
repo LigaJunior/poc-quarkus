@@ -1,18 +1,20 @@
 package service;
 
 import error.CustomBadRequestException;
+import error.CustomNotFoundException;
 import model.ChocoBox;
 import model.Player;
 import model.RequestModel.ChocoBoxRM;
 import model.ViewModel.ChocoBoxVM;
+import repository.ChocoBoxRepository;
+import repository.PlayerRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static model.ViewModel.VMConverter.convertChoco;
 import static model.ViewModel.VMConverter.convertChocos;
@@ -20,40 +22,40 @@ import static model.ViewModel.VMConverter.convertChocos;
 @ApplicationScoped
 public class ChocoBoxService {
     @Inject
-    public ChocoBoxService(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public ChocoBoxService(ChocoBoxRepository repository, PlayerRepository playerRepository) {
+        this.chocoBoxRepository = repository;
+        this.playerRepository = playerRepository;
     }
 
-    private EntityManager entityManager;
+    private ChocoBoxRepository chocoBoxRepository;
+    private PlayerRepository playerRepository;
 
     public List<ChocoBoxVM> findAll() {
-        List<ChocoBox> source = entityManager.createNamedQuery("ChocoBox.findAll", ChocoBox.class)
-                .getResultList();
+        List<ChocoBox> source = this.chocoBoxRepository.findAll();
         return convertChocos(source);
     }
 
     public ChocoBoxVM saveOne(ChocoBoxRM chocoBoxRM) {
         if (!isValid(chocoBoxRM)) throw new CustomBadRequestException("The given chocobox is not valid.");
 
-        Player player = Player.findById(chocoBoxRM.getPlayerId());
+        Player player = Optional.ofNullable(this.playerRepository.findById(chocoBoxRM.getPlayerId()).get(0))
+                .orElseThrow(() -> new CustomNotFoundException("The given chocobox is not valid."));
+
         ChocoBox choco = new ChocoBox(player.getName(),
                 chocoBoxRM.getReason(),
                 chocoBoxRM.getPlayerId(),
                 false,
                 null
         );
-        this.entityManager.persist(choco);
 
+        this.chocoBoxRepository.persist(choco);
         return convertChoco(choco);
     }
 
     private boolean isValid(ChocoBoxRM chocoBoxRM) {
         boolean validationStatus = false;
 
-        boolean isPlayerIdPointingToAExistingPlayer = this.entityManager.createNativeQuery("select * from player where player.active = true and id =" + chocoBoxRM.getPlayerId() + ";", Player.class)
-                .getResultStream()
-                .findFirst()
-                .isPresent();
+        boolean isPlayerIdPointingToAExistingPlayer = Optional.ofNullable(this.playerRepository.findById(chocoBoxRM.getPlayerId())).isPresent();
 
         validationStatus = isPlayerIdPointingToAExistingPlayer;
 
@@ -61,22 +63,22 @@ public class ChocoBoxService {
     }
 
     public ChocoBoxVM payOldestChocoDebt(Long playerId) {
-        Query query = this.entityManager.createNativeQuery("SELECT * from choco_box where playerid=" + playerId +
-                " and paidout = false", ChocoBox.class);
-        List<ChocoBox> chocob = query.getResultList();
+        List<ChocoBox> oldestChocoBox = this.chocoBoxRepository.findByPlayerId(playerId);
 
-        chocob.sort(Comparator.comparing((ChocoBox::getRegistrationDate)).reversed());
-        chocob.get(0).setPaidOut(true);
-        chocob.get(0).setPaidOutDate(LocalDate.now());
+        oldestChocoBox.sort(Comparator.comparing((ChocoBox::getRegistrationDate)).reversed());
+        oldestChocoBox.get(0).setPaidOut(true);
+        oldestChocoBox.get(0).setPaidOutDate(LocalDate.now());
 
-        return convertChoco(chocob.get(0));
+        return convertChoco(oldestChocoBox.get(0));
     }
 
     public void payById(Long chocoId) {
-        Query query = this.entityManager.createNativeQuery("SELECT * FROM choco_box where id=" + chocoId, ChocoBox.class);
-        ChocoBox paidChoco = (ChocoBox) query.getResultList().get(0);
+        List<ChocoBox> source = this.chocoBoxRepository.findById(chocoId);
+        ChocoBox paidChoco = Optional.ofNullable(source.get(0)).orElseThrow(() -> new CustomNotFoundException("Choco box not found"));
+
         paidChoco.setPaidOut(true);
         paidChoco.setPaidOutDate(LocalDate.now());
-        this.entityManager.merge(paidChoco);
+
+        this.chocoBoxRepository.merge(paidChoco);
     }
 }

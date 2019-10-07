@@ -1,5 +1,6 @@
 package resource;
 
+import model.Player;
 import model.RequestModel.PlayerRM;
 import service.PlayerService;
 
@@ -8,6 +9,10 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.List;
+
+import static model.ViewModel.VMConverter.convertPlayer;
+import static model.ViewModel.VMConverter.convertPlayers;
 
 @Path("players")
 @ApplicationScoped
@@ -23,8 +28,9 @@ public class PlayerResource {
 
     @GET
     public Response get() {
+        List<Player> sourcePlayerList = this.service.findAll();
         return Response
-                .ok(this.service.findAll())
+                .ok(convertPlayers(sourcePlayerList))
                 .build();
     }
 
@@ -32,7 +38,7 @@ public class PlayerResource {
     @Path("/unallocated")
     public Response getUnallocated() {
         return Response
-                .ok(this.service.findUnallocated())
+                .ok(convertPlayers(this.service.findUnallocated()))
                 .build();
     }
 
@@ -40,7 +46,7 @@ public class PlayerResource {
     @Transactional
     public Response create(PlayerRM playerRM) {
         return Response
-                .ok(this.service.saveOne(playerRM))
+                .ok(convertPlayer(this.service.saveOne(playerRM)))
                 .build();
     }
 
@@ -48,7 +54,7 @@ public class PlayerResource {
     @Transactional
     @Path("/{playerId}")
     public Response delete(@PathParam("playerId") Long playerId) {
-        return Response.ok(this.service.deleteOne(playerId))
+        return Response.ok(convertPlayers(this.service.deleteOne(playerId)))
                 .build();
     }
 
