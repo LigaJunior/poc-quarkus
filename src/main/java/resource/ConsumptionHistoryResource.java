@@ -20,6 +20,7 @@ public class ConsumptionHistoryResource {
     public ConsumptionHistoryResource(ConsumptionHistoryService service) {
         this.service = service;
     }
+
     private ConsumptionHistoryService service;
 
     @GET

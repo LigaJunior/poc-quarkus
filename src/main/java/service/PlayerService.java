@@ -4,6 +4,7 @@ import error.CustomBadRequestException;
 import error.CustomNotFoundException;
 import model.Player;
 import model.RequestModel.PlayerRM;
+import model.Sprint;
 import model.ViewModel.PlayerRankVM;
 import model.ViewModel.PlayerVM;
 
@@ -28,27 +29,31 @@ public class PlayerService {
     public PlayerService(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
+
     private EntityManager entityManager;
 
     public List<PlayerVM> findAll() {
+        List<PlayerVM> playersVM = new ArrayList<>();
+
         List<Player> players = this.entityManager.createNamedQuery("Players.findAll", Player.class)
                 .getResultList();
-        List<PlayerVM> playersVM = new ArrayList<>();
-        players.forEach(p-> playersVM.add(convertPlayer(p)));
+        players.forEach(p -> playersVM.add(convertPlayer(p)));
+
         return playersVM;
     }
 
     public PlayerVM saveOne(PlayerRM playerRM) {
         if (!isValid(playerRM)) throw new CustomBadRequestException("The given player is not valid.");
+
         Player player = new Player(playerRM.getName());
         this.entityManager.persist(player);
+
         return convertPlayer(player);
     }
 
     private boolean isValid(PlayerRM playerRM) {
         boolean validationStatus = false;
 
-        //it only validates if the given name is not empty
         boolean isNameNotEmpty = !playerRM.getName().isEmpty();
 
         validationStatus = isNameNotEmpty;
@@ -57,39 +62,47 @@ public class PlayerService {
     }
 
     public List<PlayerVM> findUnallocated() {
-        List<PlayerVM> resultList = new ArrayList<>();
-        List<Player> sourceList = this.entityManager.createNativeQuery("SELECT * FROM player WHERE player.active = true and player.id NOT IN (SELECT player_id FROM sprint_player, sprint WHERE sprint_player.sprint_id = sprint.id AND sprint.active=true)", Player.class).getResultList();
-        resultList = convertPlayers(sourceList);
-        return resultList;
+        String sqlQuery = "SELECT * FROM player " +
+                "WHERE player.active = true and player.id NOT IN " +
+                "(SELECT player_id FROM sprint_player, sprint WHERE sprint_player.sprint_id = sprint.id AND sprint.active=true)";
+
+        @SuppressWarnings("unchecked")
+        List<Player> sourceList = this.entityManager.createNativeQuery(sqlQuery, Player.class)
+                .getResultList();
+        return convertPlayers(sourceList);
     }
 
-    public List<PlayerVM> DeleteOne(Long playerId) {
-        Query query = this.entityManager.createNativeQuery("SELECT * FROM player WHERE player.id="+ playerId,Player.class);
-        Player targetPlayer = Optional.ofNullable((Player)query.getResultList().get(0))
-                                        .orElseThrow(() -> new CustomNotFoundException("Player not found"));
+    public List<PlayerVM> deleteOne(Long playerId) {
+        Query query = this.entityManager
+                .createNativeQuery("SELECT * FROM player WHERE player.id=" + playerId, Player.class);
+        Player targetPlayer = Optional.ofNullable((Player) query.getResultList().get(0))
+                .orElseThrow(() -> new CustomNotFoundException("Player not found"));
+
         targetPlayer.setActive(false);
+        targetPlayer.getSprints().removeIf(Sprint::getActive);
+
         this.entityManager.merge(targetPlayer);
 
         return findAll();
     }
 
-    public List<PlayerRankVM> getPlayerRank(){
+    public List<PlayerRankVM> getPlayerRank() {
         List<PlayerRankVM> playerRank = new ArrayList<>();
 
-        Query query =  this.entityManager.createNativeQuery(
+        Query query = this.entityManager.createNativeQuery(
                 "SELECT player.*, SUM(c.amount) as amount " +
-                "FROM consumption_history as c, player " +
-                "WHERE c.player_id = player.id " +
-                "GROUP BY player.id ORDER BY sum(c.amount) DESC"
+                        "FROM consumption_history as c, player " +
+                        "WHERE c.player_id = player.id " +
+                        "GROUP BY player.id ORDER BY sum(c.amount) DESC"
         );
-        List<Object[]> results =  query.getResultList();
+        List<Object[]> results = query.getResultList();
         results.forEach((record) -> {
             PlayerVM player = new PlayerVM(
-                    ((BigInteger)record[0]).longValue(),
+                    ((BigInteger) record[0]).longValue(),
                     String.valueOf(record[2]),
                     LocalDate.parse(String.valueOf(record[1]))
             );
-            Long amount = ((BigDecimal)record[4]).longValue();
+            Long amount = ((BigDecimal) record[4]).longValue();
 
             playerRank.add(new PlayerRankVM(amount, player));
         });

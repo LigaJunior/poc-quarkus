@@ -1,6 +1,5 @@
 package model;
 
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
@@ -34,7 +33,7 @@ public class Sprint extends model.abstracts.Entity {
     @OneToMany(mappedBy = "sprint", cascade = CascadeType.PERSIST)
     private List<ConsumptionHistory> history;
 
-    public Sprint(){
+    public Sprint() {
         this.active = true;
         this.setRegistrationDate(LocalDate.now());
     }
@@ -73,7 +72,7 @@ public class Sprint extends model.abstracts.Entity {
     }
 
     public int getDuration() {
-        Period intervalPeriod = Period.between(startDate,endDate);
+        Period intervalPeriod = Period.between(startDate, endDate);
         return intervalPeriod.getDays();
     }
 
@@ -98,7 +97,7 @@ public class Sprint extends model.abstracts.Entity {
         return players;
     }
 
-    public void addPlayer(Player player){
+    public void addPlayer(Player player) {
         this.players.add(player);
     }
 

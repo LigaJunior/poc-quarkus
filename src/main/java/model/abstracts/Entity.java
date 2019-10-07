@@ -1,4 +1,5 @@
 package model.abstracts;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.GeneratedValue;

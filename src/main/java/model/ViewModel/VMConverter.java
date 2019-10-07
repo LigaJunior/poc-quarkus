@@ -1,5 +1,6 @@
 package model.ViewModel;
 
+import model.ChocoBox;
 import model.JunkFood;
 import model.Player;
 import model.Sprint;
@@ -37,5 +38,20 @@ public class VMConverter {
         List<JunkFoodVM> convertedFoods = new ArrayList<>();
         source.forEach(f->convertedFoods.add(convertJunkFood(f)));
         return convertedFoods;
+    }
+
+    public static ChocoBoxVM convertChoco(ChocoBox chocoBox){
+        return new ChocoBoxVM(chocoBox.getId(),
+                chocoBox.getName(),
+                chocoBox.getReason(),
+                chocoBox.getPlayerId(),
+                chocoBox.getPaidOut(),
+                chocoBox.getPaidOutDate(),
+                chocoBox.getRegistrationDate());
+    }
+    public static List<ChocoBoxVM> convertChocos(List<ChocoBox> source){
+        List<ChocoBoxVM> convertedChocos = new ArrayList<>();
+        source.forEach(c->convertedChocos.add(convertChoco(c)));
+        return convertedChocos;
     }
 }

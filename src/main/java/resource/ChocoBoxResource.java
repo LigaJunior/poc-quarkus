@@ -2,11 +2,13 @@ package resource;
 
 import model.RequestModel.ChocoBoxRM;
 import service.ChocoBoxService;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+
 @Path("choco")
 @ApplicationScoped
 @Produces("application/json")
@@ -16,10 +18,11 @@ public class ChocoBoxResource {
     public ChocoBoxResource(ChocoBoxService service) {
         this.service = service;
     }
+
     private ChocoBoxService service;
 
     @GET
-    public Response get(){
+    public Response get() {
         return Response
                 .ok(this.service.findAll())
                 .build();
@@ -27,7 +30,7 @@ public class ChocoBoxResource {
 
     @POST
     @Transactional
-    public Response create(ChocoBoxRM chocoBoxRM){
+    public Response create(ChocoBoxRM chocoBoxRM) {
         return Response
                 .ok(this.service.saveOne(chocoBoxRM))
                 .build();
@@ -36,15 +39,15 @@ public class ChocoBoxResource {
     @PATCH
     @Transactional
     @Path("/{playerId}/")
-    public Response update(@PathParam("playerId") Long playerId){
-        return Response.ok(this.service.updateChoco(playerId)).build();
+    public Response update(@PathParam("playerId") Long playerId) {
+        return Response.ok(this.service.payOldestChocoDebt(playerId)).build();
     }
 
     @PATCH
     @Transactional
     @Path("/pay/{chocoId}")
-    public Response payOne(@PathParam("chocoId") Long chocoId){
-        this.service.payOne(chocoId);
+    public Response payOne(@PathParam("chocoId") Long chocoId) {
+        this.service.payById(chocoId);
         return Response.ok().build();
     }
 }

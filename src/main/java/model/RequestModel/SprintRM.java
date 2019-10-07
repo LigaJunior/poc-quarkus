@@ -26,7 +26,7 @@ public class SprintRM {
     }
 
     public int getDaysDuration() {
-        Period intervalPeriod = Period.between(startDate,endDate);
+        Period intervalPeriod = Period.between(startDate, endDate);
         return intervalPeriod.getDays();
     }
 

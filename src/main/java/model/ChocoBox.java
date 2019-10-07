@@ -19,6 +19,7 @@ public class ChocoBox extends model.abstracts.Entity {
     public ChocoBox() {
         this.setRegistrationDate(LocalDate.now());
     }
+
     public ChocoBox(String name, String reason, Long playerId, Boolean paidOut, LocalDate paidOutDate) {
         this.setRegistrationDate(LocalDate.now());
         this.name = name;
@@ -28,9 +29,10 @@ public class ChocoBox extends model.abstracts.Entity {
         this.paidOutDate = paidOutDate;
     }
 
-    public static ChocoBox findById(long playerId){
+    public static ChocoBox findById(long playerId) {
         return (ChocoBox) find("playerId", playerId).stream();
     }
+
     public Boolean getPaidOut() {
         return paidOut;
     }

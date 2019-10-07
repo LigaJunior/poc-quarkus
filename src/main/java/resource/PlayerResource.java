@@ -22,7 +22,7 @@ public class PlayerResource {
     private PlayerService service;
 
     @GET
-    public Response get(){
+    public Response get() {
         return Response
                 .ok(this.service.findAll())
                 .build();
@@ -30,7 +30,7 @@ public class PlayerResource {
 
     @GET
     @Path("/unallocated")
-    public Response getUnallocated(){
+    public Response getUnallocated() {
         return Response
                 .ok(this.service.findUnallocated())
                 .build();
@@ -38,7 +38,7 @@ public class PlayerResource {
 
     @POST
     @Transactional
-    public Response create(PlayerRM playerRM){
+    public Response create(PlayerRM playerRM) {
         return Response
                 .ok(this.service.saveOne(playerRM))
                 .build();
@@ -47,14 +47,14 @@ public class PlayerResource {
     @PATCH
     @Transactional
     @Path("/{playerId}")
-    public Response delete(@PathParam("playerId") Long playerId){
-        return Response.ok(this.service.DeleteOne(playerId))
+    public Response delete(@PathParam("playerId") Long playerId) {
+        return Response.ok(this.service.deleteOne(playerId))
                 .build();
     }
 
     @GET
     @Path("rank")
-    public Response getPlayerRank(){
+    public Response getPlayerRank() {
         return Response
                 .ok(this.service.getPlayerRank())
                 .build();

@@ -1,6 +1,5 @@
 package model;
 
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.List;
 @Table(name = "player")
 @NamedQuery(name = "Players.findAll",
         query = "SELECT f FROM Player f WHERE f.active = true ORDER BY f.name")
-public class Player extends model.abstracts. Entity {
+public class Player extends model.abstracts.Entity {
     @Column(name = "active")
     private boolean active;
 
@@ -51,7 +50,7 @@ public class Player extends model.abstracts. Entity {
         return sprints;
     }
 
-    public void addSprint(Sprint sprint){
+    public void addSprint(Sprint sprint) {
         this.sprints.add(sprint);
         sprint.getPlayers().add(this);
     }

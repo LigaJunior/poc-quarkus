@@ -39,47 +39,45 @@ public class SprintResource {
         return Response.ok(this.service.saveOne(sprintRM)).status(200).build();
     }
 
+    @GET
     @Path("active")
-    @GET
-    public Response findActiveSprints(){
-        return Response.ok( this.service.findActiveSprints()).status(200).build();
+    public Response findActiveSprints() {
+        return Response.ok(this.service.findActiveSprints()).status(200).build();
     }
 
+    @GET
     @Path("active/player-rank")
-    @GET
-    public Response getPlayerRankForActiveSprint(){
-        return Response.ok( this.service.getPlayerRankForActiveSprint()).status(200).build();
+    public Response getPlayerRankForActiveSprint() {
+        return Response.ok(this.service.getPlayerRankForActiveSprint()).status(200).build();
     }
 
-    @Path("extend")
     @PATCH
     @Transactional
-    public Response extendActiveSprintDeadLine(ExtendSprintVM endDate){
-        return Response.ok( this.service.extendActiveSprintDeadLine(endDate)).status(200).build();
+    @Path("extend")
+    public Response extendActiveSprintDeadLine(ExtendSprintVM endDate) {
+        return Response.ok(this.service.extendActiveSprintDeadLine(endDate)).status(200).build();
     }
 
     @PATCH
     @Transactional
     @Path("/{playerID}/{sprintID}")
-    public Response addToSprint(@PathParam("playerID") Long playerId,@PathParam("sprintID") Long sprintId){
+    public Response addPlayer(@PathParam("playerID") Long playerId, @PathParam("sprintID") Long sprintId) {
         return Response
-                .ok(this.service.addToSprint(playerId,sprintId))
+                .ok(this.service.addPlayer(playerId, sprintId))
                 .build();
     }
 
     @GET
-    @Transactional
     @Path("most-junk")
-    public Response getSprintRankedJunkFood(){
+    public Response getMostJunk() {
         return Response
                 .ok(this.service.getMostJunkSprint())
                 .build();
     }
 
     @GET
-    @Transactional
     @Path("rank")
-    public Response getSprintRankOfFoodConsumption(){
+    public Response getFoodConsumptionRank() {
         return Response
                 .ok(this.service.getSprintRank())
                 .build();

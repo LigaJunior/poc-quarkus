@@ -14,8 +14,7 @@ import static model.ViewModel.VMConverter.convertJunkFood;
 import static model.ViewModel.VMConverter.convertJunkFoods;
 
 @ApplicationScoped
-public class JunkFoodService
-{
+public class JunkFoodService {
     @Inject
     public JunkFoodService(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -23,14 +22,14 @@ public class JunkFoodService
 
     private EntityManager entityManager;
 
-    public List<JunkFoodVM> findAll(){
+    public List<JunkFoodVM> findAll() {
         return convertJunkFoods(
-                    entityManager.createNamedQuery("JunkFoods.findAll", JunkFood.class)
+                entityManager.createNamedQuery("JunkFoods.findAll", JunkFood.class)
                         .getResultList()
-                );
+        );
     }
 
-    public JunkFoodVM saveOne(JunkFoodRM foodRM){
+    public JunkFoodVM saveOne(JunkFoodRM foodRM) {
         if (!isValid(foodRM)) throw new CustomBadRequestException("The given junk food is not valid.");
         JunkFood food = new JunkFood(foodRM.getName());
         entityManager.persist(food);
